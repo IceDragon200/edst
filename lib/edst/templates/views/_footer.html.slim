@@ -1,0 +1,17 @@
+foot
+  .author
+    | Written By:
+    a(href="mailto:mistdragon100@gmail.com")
+      = " IceDragon (Corey Powell)"
+
+  .generated
+    = "Generated On: #{Time.now.strftime("%D @ %T")}"
+
+  .copyright
+    | © 2014 Corey Powell
+
+  - unless inline
+    script src="./js/smooth-scroll.js"
+    /script(src="./js/jquery-2.1.1.js")
+    javascript:
+      smoothScroll.init({speed: 500, easer: "easeOutCubic", updateURL: true });

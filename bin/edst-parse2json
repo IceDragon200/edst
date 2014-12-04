@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+# edst-parse2json
+# Converts .edst files to token json data
+require 'json'
+require 'rake/ext/string'
+require 'edst/parser'
+
+ARGV.each do |filename|
+  content = File.read filename
+  result = EDST::Parser.new.tokenize(content, verbose: false).map(&:to_h)
+  File.write(filename.ext('json'), result.to_json)
+end

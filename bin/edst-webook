@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+require 'yaml'
+require 'fileutils'
+require 'active_support/core_ext/string/inflections'
+
+filename = ARGV.first
+
+dirname = filename.underscore
+
+FileUtils::Verbose.mkdir_p(dirname)
+
+Dir.chdir(dirname) do
+  unless File.exist?('edstbook')
+    File.write('edstbook', {'path' => filename}.to_yaml)
+    STDERR.puts "  FILE #{File.join(dirname, "edstbook")}"
+  end
+end

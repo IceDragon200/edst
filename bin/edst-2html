@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# edst-2html
+require 'edst/cli/edst_to_html'
+
+inline = true
+
+if ARGV.empty?
+  STDOUT.write(EDST.edst_to_html(STDIN.read, inline))
+else
+  ARGV.each do |filename|
+    EDST.edst_to_html_file filename, inline
+  end
+end

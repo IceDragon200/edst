@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+# edst-2bson
+# uses a subset of the EDST markup to generate a kvp map
+require 'edst/cli/edst-2common'
+require 'bson'
+
+EDST::Cli::Convert.run(ARGV.dup) do |data|
+  [:binary, data.to_bson]
+end

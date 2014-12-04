@@ -1,0 +1,23 @@
+%%block_tag
+{
+  %empty_tag
+  %tag_with_value Hello World
+  --Label--
+  -- Label --
+  ---Item
+  --- Item
+  ~HEADER
+  # Comment
+
+  ## V1 Declaration
+  >> Declaration
+
+
+  'Single Quote'
+  `Backtick Quote`
+  "Double Quote"
+  <Reference>
+  < Reference >
+  *Action*
+  * Action *
+}

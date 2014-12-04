@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+require 'json'
+require 'pp'
+require 'optparse'
+require 'edst/cli/navigation'
+
+EDST::Navigation::Cli.run(File.basename(__FILE__), ARGV.dup)

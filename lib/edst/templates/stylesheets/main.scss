@@ -1,0 +1,456 @@
+/**
+ * Eric Meyer's Reset CSS v2.0 (http://meyerweb.com/eric/tools/css/reset/)
+ * http://cssreset.com
+ */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video, dialogue {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol, ul {
+  list-style: none;
+}
+blockquote, q {
+  quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/*
+ * earthen/smiths/edst_main.css
+ */
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 1em;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 300;
+}
+
+h1 { font-size: 4.0em; }
+h2 { font-size: 3.0em; }
+h3 { font-size: 2.0em; }
+h4 { font-size: 1.7em; }
+h5 { font-size: 1.5em; }
+h6 { font-size: 1.2em; }
+
+/*h1:first-letter,
+h2:first-letter,
+h3:first-letter,
+h4:first-letter,
+h5:first-letter,
+h6:first-letter
+{
+  font-size: 200%;
+}*/
+
+a {
+  font-weight: 300;
+  text-decoration: none;
+  transition: 0.25s color;
+}
+
+a:hover {
+
+}
+
+a.disabled {
+
+}
+
+a.disabled:hover {
+
+}
+
+a:hover, a:focus, a:active, a:visited {
+  /*font-weight: initial;*/
+}
+
+nav {
+  position: fixed;
+  width: 100%;
+  /*height: 2.0em;*/
+  padding: 0px;
+  border-bottom: 0.1em solid;
+  font-size: 2.0em;
+}
+
+nav a {
+  position: relative;
+  display: inline-block;
+}
+
+nav select {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+nav select:hover,
+nav select:focus,
+nav select:active,
+nav select:visited {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  box-shadow: none;
+}
+
+nav .group {
+  display: inline-block;
+}
+
+nav .group.left {
+  float: left;
+}
+
+nav .group.middle {
+  float: center;
+}
+
+nav .group.right {
+  float: right;
+}
+
+.button {
+  margin-left: 0.5em;
+  margin-right: 0.5em;
+  padding-left: 0.25em;
+  padding-right: 0.25em;
+  border-left: 1px solid;
+  border-right: 1px solid;
+  transition: 0.25s background-color;
+}
+
+.button:hover {
+
+}
+
+a.disabled .button:hover {
+
+}
+
+header {
+  border-bottom: 1em solid;
+  padding-top: 3.0em;
+  padding-bottom: 0.25em;
+}
+
+header .contents {
+  margin: 1em;
+  margin-left: 3em;
+  margin-right: 3em;
+  line-height: 1.2;
+}
+
+header h1, header h2, header h3 {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+ol.characters, ol.parts {
+  margin: 0.25em;
+  margin-left: 1.5em;
+  margin-right: 1.5em;
+}
+
+ol.characters .add {
+
+}
+
+ol.characters .persist {
+
+}
+
+ol.characters .remove {
+
+}
+
+ol.characters .special {
+
+}
+
+.body {
+  width: 100%;
+}
+
+.body em {
+  font-style: italic;
+}
+
+.body em.action {
+  font-size: 1.2em;
+  font-style: italic;
+  margin: 0.4em;
+  margin-left: 1.0em;
+  margin-right: 1.0em;
+}
+
+.body > p {
+  margin-left: 5.0em;
+  margin-right: 5.0em;
+}
+
+.body > h1 {
+  font-size: 4.5em;
+  margin-left: 1.2em;
+  margin-right: 1.2em;
+  margin-bottom: 0.5em;
+  padding-top: 0.5em;
+  font-style: italic;
+}
+
+.body h1:first-letter {
+  font-size: 200%;
+}
+
+.body hr {
+  width: 100%;
+  height: 2.5em;
+  border: 0;
+  border-top: 0.5em solid;
+}
+
+.body hr:last-child {
+  margin-bottom: 0px;
+}
+
+dialogue, footer {
+  display: block;
+  width: 100%;
+  border-top: 0px solid;
+}
+
+dialogue {
+  margin-bottom: 0.25em;
+  margin-top: 0.25em;
+  border-bottom: 0.60em solid;
+  transition: 0.25s border-bottom-width, 0.25s border-top-width;
+  &:hover {
+    border-bottom-width: 0em;
+    border-top-width: 0.60em;
+  }
+  speaker {
+    padding: 0.25em;
+    margin-left: 2.5em;
+    margin-right: 2.5em;
+    font-size: 1.7em;
+    font-weight: 300;
+  }
+  p {
+    margin-left: 5.0em;
+    margin-right: 4.5em;
+    padding: 0.5em;
+  }
+}
+
+footer {
+  font-size: inherit;
+  border-top: 0.75em solid;
+  .author {
+    display: inline-block;
+    margin: 0.5em;
+    margin-left: 0.75em;
+    margin-right: 0.75em;
+  }
+  .generated {
+    display: inline-block;
+    margin: 0.5em;
+    margin-left: 0.75em;
+    margin-right: 0.75em;
+    float: right;
+    font-family: monospace;
+  }
+  .copyright {
+   text-align: center;
+   padding: 1em;
+  }
+  a {
+    font-weight: 300;
+    &:hover {
+      font-weight: 300;
+    }
+  }
+}
+
+/* Index Page */
+.arc, .cluster {
+  margin: 0.5em;
+  padding: 0.5em;
+  border-radius: 1em;
+}
+
+.arc {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+.cluster {
+  margin-left: 1.2em;
+  margin-right: 1.2em;
+}
+
+.arc h2:first-letter, .cluster h2:first-letter {
+  font-size: 200%;
+}
+
+body.index {
+  header {
+    /*height: calc(100% - 4em);*/
+    ol.links {
+      margin-left: 2em;
+      margin-right: 2em;
+    }
+  }
+  footer {
+    /*height: 4em;*/
+  }
+}
+
+/*
+ * Colors
+ * Light
+ */
+body, .regular-scheme {
+  color: #333;
+
+  a {
+    color: #333;
+    &:hover {
+      color: #777;
+    }
+    &:focus {
+    }
+    &:active {
+    }
+    &:visited {
+    }
+    &.disabled {
+      color: #aaa;
+    }
+    &.disabled:hover {
+      color: #aaa;
+    }
+  }
+
+  nav {
+    background-color: #DDD;
+    border-bottom-color: #AAA;
+
+    select {
+      background-color: white;
+
+      &:hover, &:focus, &:active, &:visited {
+        background-color: white;
+      }
+    }
+  }
+
+  .button {
+    border-left-color: rgba(0, 0, 0, 0.25);
+    border-right-color: rgba(0, 0, 0, 0.25);
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+
+
+  a.disabled .button:hover {
+    background-color: transparent;
+  }
+
+  header {
+    background-color: #EFEFEF;
+    border-bottom-color: #CCC;
+  }
+
+  ol.characters {
+    .add {
+      color: rgb(94, 143, 238);
+    }
+
+    .persist {
+
+    }
+
+    .remove {
+      color: rgb(163, 71, 61);
+    }
+
+    .special {
+      color: rgb(1, 196, 211);
+    }
+  }
+
+  .body {
+    background-color: #FFF;
+    color: #222;
+    em {
+      color: #57A;
+    }
+    hr {
+      background-color: #F1F1F1;
+      border-top-color: #ECECEC;
+    }
+  }
+
+  dialogue, footer {
+    background-color: #222;
+    color: #FFF;
+    border-top-color: #333;
+  }
+
+  dialogue {
+    border-bottom-color: #111;
+    speaker {
+      color: #f0ebc1;
+    }
+  }
+
+  footer {
+    border-top-color: #333;
+    a {
+      color: #FFF;
+      &:hover {
+        color: #0AF;
+      }
+    }
+  }
+
+  .arc, .cluster {
+    background-color: rgba(0, 0, 0, 0.02);
+  }
+}

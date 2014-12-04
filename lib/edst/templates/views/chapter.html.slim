@@ -1,0 +1,88 @@
+body.chapter
+  - if navigation
+    nav
+      .group.left
+        - if cls = prev_cluster
+          a.button.left(href="#{{cls.href}}") Prev Cluster
+        - else
+          a.disabled.button.left Prev Cluster
+
+        - if chp = prev_chapter
+          a.button.right(href="#{{chp.href}}") Prev
+        - else
+          a.disabled.button.right Prev
+
+      .group.middle
+        a href="./index.html"
+          - if inline
+            | "Home"
+          - else
+            i.fa.fa-tasks
+        /select.chapters
+          / pull from the navigation, but reference the chapter instead
+        /  - for key in navigation.keys.sort
+        /    - if chapter = chapters[key.to_i]
+        /      option(id="#{{chapter.id}}")
+        /        = "#{chapter.chapter_id} : #{chapter.sub_title}"
+
+      .group.right
+        - if chp = next_chapter
+          a.button.left.next(href="#{{chp.href}}") Next
+        - else
+          a.disabled.button.left.next Next
+
+        - if cls = next_cluster
+          a.button.right.next-cluster(href="#{{cls.href}}") Next Cluster
+        - else
+          a.disabled.button.right.next-cluster Next Cluster
+
+  header
+    .contents
+      h1
+        = display_title
+      h2
+        = display_sub_title
+      h6
+        = id
+
+      - if parts && !parts.empty?
+        h3 Parts
+        ol.parts
+          - parts.each do |part|
+            li
+              a(data-scroll href="##{{part.id}}") = part.name
+
+      - if characters && !characters.empty?
+        h3 Characters
+        ol.characters
+          - characters.each do |character|
+            li(class="#{{character.state}}") = character.name
+
+      h3.narrator = narrator
+
+
+  .body
+    - body_contents.each do |elem|
+      - case elem \
+        when Dialogue
+        dialogue
+          speaker
+            = elem.speaker
+          p
+            == edst_escape(elem.string)
+      - when Paragraph
+        - unless elem.string.empty?
+          p
+            == edst_escape(elem.string)
+      - when Label
+        - if elem.name.empty?
+          / end label
+          hr
+        - else
+          h1(id="#{{elem.id}}")
+            = elem.name
+
+  /.tail
+  /  - tail_contents.each do |elem|
+  /    - case elem \
+  /      when EDST::Chapter

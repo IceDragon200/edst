@@ -1,0 +1,13 @@
+head
+  meta charset="utf-8"
+  meta name="viewport" content="width=device-width, initial-scale=1"
+  link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,300,300italic,400,400italic,600,700,900&amp;subset=latin,latin-ext" rel="stylesheet" type="text/css" async="true"
+  - if inline
+    style(type="text/css")
+      == File.read(find_template('main.scss'))
+  - else
+    link type="text/css" rel="stylesheet" href="./css/main.css"
+    link async="true" type="text/css" rel="stylesheet" href="./css/font-awesome-4.1.0/css/font-awesome.css"
+
+  title
+    = page_title

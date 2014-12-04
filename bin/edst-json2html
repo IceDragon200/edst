@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+require 'edst/html_renderer'
+
+ARGV.sort.each do |filename|
+  EDST::HTMLRenderer.convert_json_file(filename)
+end

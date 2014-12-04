@@ -1,0 +1,138 @@
+#!/usr/bin/env ruby
+require 'active_support/core_ext'
+require 'edst/convert/edst_to_h'
+require 'edst/context/chapter'
+require 'edst/core_ext'
+require 'fileutils'
+require 'yaml'
+require 'ostruct'
+require 'optparse'
+require 'pp'
+
+def new_hash_default_0
+  hsh = {}
+  hsh.default = 0
+  hsh
+end
+
+def new_hash_default_infinity
+  hsh = {}
+  hsh.default = Float::INFINITY
+  hsh
+end
+
+def new_hash_default_array
+  hsh = {}
+  #hsh.default_proc = ->(k,v) { [] }
+  hsh
+end
+
+def stat_chapter_data_by_range(samples)
+  data = OpenStruct.new
+
+  data.characters = []
+  data.dialogue_characters = []
+
+  data.dialogue_count_by_character = new_hash_default_0
+  #data.dialogue_count_by_character_per_chapter = {}
+
+  data.dialogue_by_character = new_hash_default_array
+  #data.dialogue_by_character_per_chapter = {}
+
+  data.word_count_by_character = new_hash_default_0
+  #data.word_count_by_character_per_chapter = {}
+  data.shortest_word_count_by_character = new_hash_default_infinity
+  #data.shortest_word_count_by_character_per_chapter = {}
+  data.longest_word_count_by_character = new_hash_default_0
+  #data.longest_word_count_by_character_per_chapter = {}
+
+  data.dictionary = new_hash_default_0
+  data.dictionary_by_character = {}
+  #data.dictionary_by_character_per_chapter = {}
+
+  data.most = {}
+
+  samples.each do |filename|
+    chapter = EDST::Context::Chapter.new
+    chapter.setup EDST.tokenize_file(filename)
+
+    data.characters.concat chapter.characters.map(&:name)
+
+    chapter.body_contents.select_by_class(EDST::Context::Chapter::Dialogue).each do |dialogue|
+      data.dialogue_characters << dialogue.speaker
+
+      ckey = dialogue.speaker
+      chapt_key = chapter.chapter_id
+
+      (data.dialogue_by_character[ckey]||=[]) << dialogue.string
+      #((data.dialogue_by_character_per_chapter[chapt_key]||={})[ckey]||=[]) << dialogue.string
+
+      words = dialogue.string.words.map(&:downcase)
+      words.each do |word|
+        data.dictionary[word] += 1
+        (data.dictionary_by_character[ckey]||=new_hash_default_0)[word] += 1
+        #((data.dictionary_by_character_per_chapter[chapt_key]||={})[ckey]||=new_hash_default_0)[word] += 1
+      end
+
+      data.dialogue_count_by_character[ckey] += 1
+      #(data.dialogue_count_by_character_per_chapter[chapt_key] ||= new_hash_default_0)[ckey] += 1
+
+      word_count = dialogue.string.word_count
+
+      data.word_count_by_character[ckey] += word_count
+      #(data.word_count_by_character_per_chapter[chapt_key] ||= new_hash_default_0)[ckey] += word_count
+
+      if data.shortest_word_count_by_character[ckey] > word_count
+        data.shortest_word_count_by_character[ckey] = word_count
+      end
+      #if (data.shortest_word_count_by_character_per_chapter[chapt_key] ||= new_hash_default_infinity)[ckey] > word_count
+      #  (data.shortest_word_count_by_character_per_chapter[chapt_key] ||= new_hash_default_infinity)[ckey] = word_count
+      #end
+
+      if data.longest_word_count_by_character[ckey] < word_count
+        data.longest_word_count_by_character[ckey] = word_count
+      end
+      #if (data.longest_word_count_by_character_per_chapter[chapt_key] ||= new_hash_default_0)[ckey] < word_count
+      #  (data.longest_word_count_by_character_per_chapter[chapt_key] ||= new_hash_default_0)[ckey] = word_count
+      #end
+    end
+  end
+
+  talkative = data.dialogue_count_by_character.entries.map(&:reverse)
+  wordy = data.word_count_by_character.entries.map(&:reverse)
+  short_dialoguers = data.shortest_word_count_by_character.entries.map(&:reverse)
+  long_dialoguers = data.longest_word_count_by_character.entries.map(&:reverse)
+  dict = data.dictionary.entries.map(&:reverse)
+
+  data.most['talkative_top:5'] = talkative.reverse_sort[0,5].map(&:last)
+  data.most['wordy_top:5'] = wordy.reverse_sort[0,5].map(&:last)
+  data.most['quiet_top:5'] = talkative.sort[0,5].map(&:last)
+  data.most['no_much_to_say_top:5'] = wordy.sort[0,5].map(&:last)
+  data.most['short_phrasers_top:5'] = short_dialoguers.sort[0,5].map(&:last)
+  data.most['long_phrasers_top:5'] = long_dialoguers.reverse_sort[0,5].map(&:last)
+  data.most['favourite_words_top:15'] = dict.reverse_sort[0,15].map(&:last)
+
+  data.dialogue_characters.tap(&:uniq!).tap(&:sort!)
+  data.characters.tap(&:uniq!).tap(&:sort!)
+
+  data
+end
+
+options = OpenStruct.new
+
+optparse = OptionParser.new do |op|
+  op.on '-o', '--output FILENAME' do |fn|
+    options.output = fn
+  end
+end
+
+argv = optparse.parse!(ARGV.dup)
+
+data = stat_chapter_data_by_range argv
+yml = data.to_h.stringify_keys.to_yaml
+
+if options.filename
+  File.write(options.filename, yml)
+else
+  STDOUT.puts(yml)
+end
