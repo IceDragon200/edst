@@ -1,7 +1,6 @@
-require 'active_support/core_ext'
 require 'edst/core_ext/string'
-require 'edst/parser/token'
-require 'edst/parser'
+require 'edst/lexer/token'
+require 'edst/lexer'
 require 'yajl'
 
 module EDST
@@ -21,7 +20,7 @@ module EDST
         if last_ln
           last_ln.children << basetoken
         else
-          last_ln = EDST::Parser::Token.new(:list, children: [basetoken])
+          last_ln = Lexer::Token.new(:list, children: [basetoken])
           result << last_ln
         end
       else
@@ -39,7 +38,7 @@ module EDST
   # @param [Object] obj
   # @param [Hash] options
   def self.tokenize(obj, **options)
-    rawtokens = Parser.parse(obj, options)
+    rawtokens = Lexer.lex(obj, options)
     tokens = compress_elements(rawtokens)
     Yajl::Parser.parse(Yajl::Encoder.encode(tokens.map(&:to_token_a)))
   end

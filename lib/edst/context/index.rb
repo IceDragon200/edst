@@ -6,6 +6,7 @@ module EDST
     class Index < Base
       attr_accessor :meta
       attr_accessor :chapters
+      attr_accessor :clusters
       attr_accessor :navigation
 
       attr_reader :title
@@ -16,6 +17,7 @@ module EDST
         super
         @meta = nil
         @chapters = nil
+        @clusters = nil
         @navigation = nil
         @title = ''
         @sub_title = ''

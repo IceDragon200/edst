@@ -1,0 +1,56 @@
+- render_tree = lambda do |tre, d = 0|
+  - tre.each_child do |node|
+    - case node.kind
+    - when :dialogue
+      .dialogue
+        .h.speaker = node.key
+        .p.text = node.value
+    - when :ln
+      li
+        = node.value
+    - when :list
+      ul
+        - render_tree.call node
+    - when :header
+      .h = node.value
+    - when :label
+      .label id="#{node.value.underscore}" = node.value
+    - when :split
+      hr
+    - when :comment
+      p.comment = node.value
+    - when :tag
+      - tag_name = "tag-#{node.key.underscore}"
+      dl class="tag #{tag_name}"
+        dt class="#{tag_name}" = node.key.titlecase
+        dd class="#{tag_name}" = node.value
+    - when :div
+      - t = (node.key || '')
+      div class="subtree #{t.gsub('.', ' ')}"
+        - if node.children.empty?
+          .h.disabled = t.titlecase
+        - else
+          .h = t.titlecase
+          .c
+            - render_tree.call node, d + 1
+    - when :p
+      p = node.value
+    - else
+      div class="#{node.kind}"
+        p.comment = "FIXME: #{node.kind}"
+        dl
+          dt = node.key
+          dd = node.value
+
+doctype html
+html
+  head
+    - head = ((h = tree.search('header').first) && h.value) || File.basename(filename)
+    title = head.titlecase
+    link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'
+    == "<style>" + template_manager.render_template('stylesheets/edst_generic.scss') + "</style>"
+    /link href='../../edst_generic.css' rel='stylesheet' type='text/css'
+
+  body
+    div.content
+      - render_tree.call tree, 0

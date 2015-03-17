@@ -1,0 +1,263 @@
+/*
+ * EDST Generic stylesheet.
+ * AUTHOR: Corey Powell (mistdragon100@gmail.com)
+ */
+* {
+  margin: 0px;
+  vertical-align: top;
+}
+
+body {
+  line-height: 1.2;
+  color: #333;
+  font-size: 14px;
+  font-family: 'Lato', sans-serif;
+}
+
+p {
+  line-height: 1.4;
+}
+
+.h, h1, h2, h3, h4, h5, h6 {
+  text-shadow: 1px -1px 0px rgba(255, 255, 255, 0.45);
+}
+
+.h {
+  display: block;
+  font-size: 2em;
+}
+
+.c {
+  display: block;
+  margin: 0.25em;
+  padding: 0.25em;
+}
+
+.disabled {
+  opacity: 0.1;
+}
+
+hr {
+  width: 80%;
+  height: 1px;
+  background-color: #DDD;
+  border: 0;
+  padding: 0;
+  margin: auto;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+p.comment {
+  display: block;
+  margin-left: 1em;
+  font-family: monospace;
+  font-size: 10px;
+  color: #777;
+}
+
+dl {
+  display: block;
+}
+
+dt {
+  display: inline-block;
+  width: calc(25% - 2em);
+  font-weight: bold;
+  margin-right: 2em;
+}
+
+dd {
+  display: inline-block;
+  width: calc(75% - 2em);
+  color: #777;
+  margin-left: auto;
+}
+
+dl + dl {
+  margin-top: 0.5em;
+}
+
+.content {
+  padding: 2em;
+  padding-top: 3em;
+}
+
+.subtree {
+  margin-left: 0.25em;
+  margin-right: 0.25em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  padding: 0.5em;
+  border-radius: 8px;
+  border-left: 4px solid rgb(230, 230, 230);
+}
+
+.elements {
+  border-left-color: rgb(149, 73, 203);
+}
+
+.head {
+  border-left-color: rgb(217, 157, 16);
+  .characters .tag {
+    dt {
+      width: 2em;
+    }
+    dd {
+      width: initial;
+      display: inline-block;
+    }
+  }
+}
+
+.body {
+  border-left-color: rgb(87, 97, 198);
+}
+
+.bloopers {
+  border-left-color: rgb(188, 116, 240);
+}
+
+.body, .bloopers {
+  .c {
+    padding: 2em;
+    p {
+      margin-top: 0.25em;
+    }
+  }
+  .label {
+    color: #777;
+    margin: 1.5em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+    font-size: 2.5em;
+  }
+}
+
+.dialogue {
+  margin: 1em;
+  padding: 1em;
+  border-radius: 8px;
+  border-left: 1px dashed rgb(67, 210, 185);
+}
+
+.dialogue .h.speaker {
+  color: #555;
+  font-size: 1.2em;
+}
+
+.dialogue .p.text {
+  margin: 1.0em;
+  margin-top: 0.5em;
+  margin-bottom: 0.1em;
+  color: #777;
+  font-family: monospace;
+}
+
+.book {
+  border-left-color: rgb(255, 87, 6);
+  .subtree {
+    border-left-color: rgb(255, 131, 62);
+  }
+}
+
+.arcs {
+  border-left-color: rgb(217, 157, 16);
+  .subtree {
+    border-left-color: rgb(228, 183, 78);
+  }
+}
+
+.clusters {
+  border-left-color: rgb(115, 152, 20);
+  .subtree {
+    border-left-color: rgb(160, 192, 76);
+  }
+}
+
+.foot {
+  border-left-color: rgb(228, 183, 78);
+}
+
+.world {
+  border-left-color: rgb(0, 157, 71);
+}
+
+.items {
+  border-left-color: rgb(0, 157, 71);
+}
+
+.bracelet {
+  border-left-color: rgb(62, 187, 98);
+}
+
+.characters {
+  border-left-color: rgb(228, 183, 78);
+}
+
+.characters.aseyors {
+  border-left-color: rgb(0, 166, 148);
+}
+
+.characters.humans {
+  border-left-color: rgb(188, 116, 240);
+}
+
+.character, .bracelet, .item {
+  background-color: rgb(245, 245, 245);
+  .h {
+    color: #666;
+  }
+}
+
+.items .item,
+.bracelets .bracelet,
+.characters .character {
+  display: inline-block;
+  width: 44%;
+}
+
+.character {
+  border-left-color: rgb(67, 210, 185);
+}
+
+.research {
+  border-left-color: rgb(87, 97, 198);
+}
+
+.note {
+  .c {
+    border-left: 4px solid rgb(198, 159, 112);
+    border-right: 4px solid rgb(198, 159, 112);
+    border-radius: 8px;
+    padding: 0.5em;
+    &.disabled {
+      border-left: 4px solid rgb(230, 230, 230);
+      border-right: 4px solid rgb(230, 230, 230);
+    }
+  }
+}
+
+.subtree.element {
+  &.neutral {
+    border-left-color: rgb(198, 159, 112);
+  }
+  &.flare {
+    border-left-color: rgb(236, 97, 87);
+  }
+  &.aqua {
+    border-left-color: rgb(0, 153, 217);
+  }
+  &.land {
+    border-left-color: rgb(62, 187, 98);
+  }
+  &.atmos {
+    border-left-color: rgb(228, 183, 78);
+  }
+  &.shadow {
+    border-left-color: rgb(149, 73, 203);
+  }
+  &.lumi {
+    border-left-color: rgb(201, 201, 201);
+  }
+}

@@ -1,18 +1,18 @@
 require_relative '../spec_helper'
-require "edst/parser"
+require 'edst/lexer'
 
-describe EDST::Parser do
+describe EDST::Lexer do
   context '#tokenize' do
     it 'should tokenize a valid EDST stream' do
       data = File.read(File.join(File.dirname(__FILE__), '../../sample/edstspec.edst'))
-      subject.tokenize(data)
+      subject.lex(data)
     end
   end
 
-  context '.parse' do
+  context '.lex' do
     it 'should tokenize a valid EDST stream' do
       data = File.read(File.join(File.dirname(__FILE__), '../../sample/edstspec.edst'))
-      EDST::Parser.parse(data)
+      EDST::Lexer.lex(data)
     end
   end
 end

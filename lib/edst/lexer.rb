@@ -1,7 +1,7 @@
-require 'edst/parser/token'
+require 'edst/lexer/token'
 
 module EDST
-  class Parser
+  class Lexer
     class Containers
       attr_reader :tokens
 
@@ -40,7 +40,7 @@ module EDST
       token
     end
 
-    def tokenize(obj, **options)
+    def lex(obj, **options)
       if obj.is_a?(IO)
         str = obj.read
       else
@@ -63,13 +63,13 @@ module EDST
         ##
         # One line dialogue
         #   @ Name "String"
-        when /@\s+(.*)\s+"(.*)"/
+        when /^\s*@\s+(.*)\s+"(.*)"/
           ct.push token(:dialogue, key: $1.strip, value: $2.strip, **token_data)
         ##
         # Multi line dialogue
         #   @ Name "String
         #           Continuing the string"
-        when /@\s+(.*)\s+"(.*)/
+        when /^\s*@\s+(.*)\s+"(.*)/
           dialogue_token = token(:dialogue, key: $1.strip, value: $2.strip, **token_data)
           ct.push dialogue_token
 
@@ -83,12 +83,12 @@ module EDST
         ##
         # List Item
         #   --- Item
-        when /---(.*)/
+        when /^\s*---(.*)/
           ct.push token(:ln, value: $1.strip, **token_data)
         ##
         # Label
         #   -- Name --
-        when /--(.*)--/
+        when /^\s*--(.*)--/
           ct.push token(:label, value: $1.strip, **token_data)
           last_p_index = line_number
         ##
@@ -98,7 +98,7 @@ module EDST
         # # Comment, this is ok
         # Blah de dah # comment, this is not
         when /^\s*#(.*)/
-          ct.push token(:comment, value: $1.strip, **token_data)
+          ct.push token(:comment, value: $1, **token_data)
           last_p_index = line_number
         ##
         # Header
@@ -117,13 +117,13 @@ module EDST
         #   {
         #
         #   }
-        when /%%(.*)/
-          ct.push token(:tag, attributes: { type: "block" }, key: $1.strip, value: nil, **token_data)
+        when /^\s*%%(.*)/
+          ct.push token(:tag, attributes: { type: 'block' }, key: $1.strip, value: nil, **token_data)
         ##
         # Tag KV
         #   %key value
-        when /%(\S+)(?:\s+(.*))?/
-          ct.push token(:tag, attributes: { type: "flat" }, key: $1.strip, value: $2, **token_data)
+        when /^\s*%(\S+)(?:\s+(.*))?/
+          ct.push token(:tag, attributes: { type: 'flat' }, key: $1.strip, value: $2, **token_data)
         ##
         # It is not some special key then
         else
@@ -150,8 +150,8 @@ module EDST
       result
     end
 
-    def self.parse(obj, **options)
-      new.tokenize(obj, **options)
+    def self.lex(obj, **options)
+      new.lex(obj, **options)
     end
   end
 end

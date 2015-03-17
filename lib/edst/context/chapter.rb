@@ -9,9 +9,6 @@ module EDST
     end
     module ChapterStructs
       Paragraph = Struct.new(:string)
-      Head = Struct.new(:contents)
-      Body = Struct.new(:contents)
-      Foot = Struct.new(:contents)
       Content = Struct.new(:name, :contents)
       Part = Struct.new(:name, :id)
       Parts = Struct.new(:contents)
@@ -82,12 +79,6 @@ module EDST
                 data.push(Parts.new(parse_parts_body v['children']))
               when 'characters'
                 data.push(Characters.new(parse_characters_body v['children']))
-              when 'head'
-                data.push(Head.new(parse_body v['children']))
-              when 'body'
-                data.push(Body.new(parse_body v['children']))
-              when 'foot'
-                data.push(Foot.new(parse_body v['children']))
               else
                 data.push(Content.new(next_is_block, parse_body(v['children'])))
               end
@@ -124,6 +115,7 @@ module EDST
       attr_accessor :meta
       attr_accessor :navigation
       attr_accessor :chapters
+      attr_accessor :clusters
 
       attr_reader :id
       attr_reader :title
@@ -134,6 +126,7 @@ module EDST
       attr_reader :characters
       attr_reader :parts
       attr_reader :contents
+      attr_reader :contents_map
       attr_reader :narrator
       attr_reader :head_contents
       attr_reader :body_contents
@@ -144,6 +137,7 @@ module EDST
         @meta = nil
         @navigation = nil
         @chapters = nil
+        @clusters = nil
         @inline = false
 
         @id = ''
@@ -151,6 +145,7 @@ module EDST
         @sub_title = ''
         @chapter_id = nil
         @contents = []
+        @contents_map = {}
         @head_contents = []
         @body_contents = []
         @foot_contents = []
@@ -261,15 +256,19 @@ module EDST
       def extract_data(data)
         for obj in data
           case obj
-          when Head
-            @head = obj
-            extract_head_data @head.contents
-          when Body
-            @body = obj
-            extract_body_data @body.contents
-          when Foot
-            @foot = obj
-            extract_foot_data @foot.contents
+          when Content
+            case obj.name
+            when 'head'
+              @head = obj
+              extract_head_data @head.contents
+            when 'body'
+              @body = obj
+              extract_body_data @body.contents
+            when 'foot'
+              @foot = obj
+              extract_foot_data @foot.contents
+            end
+            @contents_map[obj.name] = obj.contents
           end
           @contents << obj
         end

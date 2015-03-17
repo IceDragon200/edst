@@ -1,13 +1,25 @@
 #!/usr/bin/env ruby
-# edst-2html
-require 'edst/cli/edst_to_html'
+require 'edst/cli/quick_html_renderer'
+require 'ostruct'
+require 'optparse'
 
-inline = true
+options = OpenStruct.new(
+  directory: Dir.getwd,
+  template: ENV['EDST_HTML_TEMPLATE'].presence
+)
 
-if ARGV.empty?
-  STDOUT.write(EDST.edst_to_html(STDIN.read, inline))
-else
-  ARGV.each do |filename|
-    EDST.edst_to_html_file filename, inline
+parser = OptionParser.new do |opts|
+  opts.on '-d', '--directory NAME', String, 'Output directory' do |v|
+    options.directory = v
   end
+
+  opts.on '-t', '--template NAME', String, 'Template file' do |v|
+    options.template = v
+  end
+end
+
+argv = parser.parse(ARGV)
+renderer = EDST::QuickHtmlRenderer.new
+argv.each do |filename|
+  renderer.render_file filename, options
 end

@@ -1,5 +1,4 @@
 require 'edst/tokenize'
-require 'active_support/core_ext'
 require 'tilt'
 
 module EDST

@@ -1,6 +1,6 @@
 require 'rake/ext/string'
 require 'edst/tokenize'
-require 'edst/html_renderer'
+require 'edst/renderers/html'
 require 'edst/context/chapter'
 require 'active_support/core_ext'
 require 'tilt'

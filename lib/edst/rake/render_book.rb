@@ -23,6 +23,7 @@ module EDST
       attr_accessor :chapters_glob_filename
       attr_accessor :chapter_frags_glob_filename
       attr_accessor :files
+      attr_accessor :stylesheets
       attr_accessor :navigation
       attr_accessor :meta
       attr_accessor :chapters
@@ -31,10 +32,12 @@ module EDST
       def initialize(src, dest)
         @srcpath = src
         @destpath = dest
+        @stylesheets = ['main']
         @meta = nil
         @navigation = nil
         @chapters_by_filename = {}
         @chapters = {}
+        @clusters = {}
         @navigation_filename = File.expand_path('chapter/navigate.json', @srcpath)
         @book_filename = File.expand_path('book.edst', @srcpath)
         @meta_filename = File.expand_path('meta.json', @srcpath)
@@ -68,6 +71,7 @@ module EDST
             chapter.meta = @meta
             chapter.navigation = @navigation
             chapter.chapters = @chapters
+            chapter.clusters = @clusters
             chapter.setup token_data
 
             @chapters_by_filename[filename] = @chapters[chapter.chapter_id] = chapter
@@ -88,6 +92,7 @@ module EDST
           index = EDST::Context::Index.new(template_manager: @template_manager)
           index.meta = @meta
           index.chapters = @chapters
+          index.clusters = @clusters
           index.navigation = @navigation
 
           token_data = EDST.tokenize(book)
@@ -102,16 +107,11 @@ module EDST
       end
 
       def define_stylesheets
-        #source = @template_manager.find_file('stylesheets/main.scss')
-        #source_dirname = File.dirname(source)
-        #sources = FileList["#{File.join(source_dirname, '**/*.scss')}"]
-        #dest = File.expand_path('css/main.css', @destpath)
-        #file dest => sources do
-        #  Sass.compile_file(source, dest)
-        #end
-        dest = File.expand_path('css/main.css', @destpath)
         task :stylesheets do
-          File.write(dest, @template_manager.render_template('stylesheets/main.scss'))
+          @stylesheets.each do |m|
+            dest = File.expand_path("css/#{m}.css", @destpath)
+            File.write(dest, @template_manager.render_template("stylesheets/#{m}.scss"))
+          end
         end
       end
 

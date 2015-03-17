@@ -1,4 +1,3 @@
-require 'active_support/core_ext'
 require 'tilt'
 
 module EDST
@@ -32,6 +31,15 @@ module EDST
     # @return [String]
     def root_path
       ROOT_PATH
+    end
+
+    # @param [String] name  name to glob
+    # @return [Array<String>]
+    def glob(name)
+      @paths.each_with_object([]) do |dirname, a|
+        path = File.expand_path(name, dirname)
+        a.concat(Dir.glob(path))
+      end
     end
 
     # @param [String]
