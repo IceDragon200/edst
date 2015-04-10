@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'activesupport', '~> 4.1'
   s.add_runtime_dependency 'yajl-ruby',     '~> 1.2'
   # dev
+  s.add_development_dependency 'codeclimate-test-reporter'
   s.add_development_dependency 'rspec',     '~> 3.1'
 
   s.require_path = 'lib'
