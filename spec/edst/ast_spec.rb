@@ -1,7 +1,7 @@
-require_relative '../spec_helper'
-require 'edst/lexer/token'
+require_relative 'spec_helper'
+require 'edst/ast'
 
-describe EDST::Lexer::Token do
+describe EDST::AST do
   context '#to_h' do
     it 'should convert token to a Hash' do
       expect(subject.to_h).to be_instance_of(Hash)
