@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.authors = ['Corey Powell']
   s.email  = 'mistdragon100@gmail.com'
 
+  s.add_runtime_dependency 'colorize',      '~> 0.7'
   s.add_runtime_dependency 'rake',          '~> 10.3'
   s.add_runtime_dependency 'toml-rb',       '~> 0.1'
   s.add_runtime_dependency 'bson',          '~> 2.3'
