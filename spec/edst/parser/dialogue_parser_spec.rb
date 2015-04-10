@@ -9,4 +9,9 @@ describe EDST::Parsers::DialogueParser do
     expect(res.key).to eq('Speaker')
     expect(res.value).to eq('Yeah :3, this here is the greatest thing EVER.')
   end
+
+  it 'should fail if the dialogue text is missing' do
+    ptr = StringScanner.new('@ ThatGuy')
+    expect { subject.match(ptr) }.to raise_error(described_class::DialogueTextMissing)
+  end
 end
