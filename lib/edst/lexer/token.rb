@@ -1,5 +1,3 @@
-require 'edst/core_ext/hash'
-
 module EDST
   class Lexer
     class Token

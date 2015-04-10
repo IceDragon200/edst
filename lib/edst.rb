@@ -1,5 +1,2 @@
 require 'edst/version'
-require 'edst/renderers/html'
-require 'edst/renderers/text'
-require 'edst/tokenize'
-require 'edst/convert/edst_to_h'
+require 'edst/lexer'
