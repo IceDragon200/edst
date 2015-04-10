@@ -2,7 +2,7 @@ module EDST
   module Helpers
     module TextHelper
       # Shamlessly stolen from ActionView::Helpers::TextHelper
-      # BECAUSE YOU WANTS TO LOAD ALL OF ACTIONVIEW JUST TO GET WORD WRAPPING!
+      # BECAUSE WHO WANTS TO LOAD ALL OF ACTIONVIEW JUST TO GET WORD WRAPPING!
       def word_wrap(text, options = {})
         line_width = options.fetch(:line_width, 80)
 
