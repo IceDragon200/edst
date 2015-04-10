@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-# edst-2yaml
-# uses a subset of the EDST markup to generate a kvp map
-require 'edst/cli/edst-2common'
-require 'yaml'
-
-EDST::Cli::Convert.run(ARGV.dup) do |data|
-  [:text, data.to_yaml]
-end
