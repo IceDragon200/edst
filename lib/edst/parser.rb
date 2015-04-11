@@ -10,6 +10,9 @@ module EDST
   class DialogueTextMissing < RuntimeError
   end
 
+  class InvalidHeader < RuntimeError
+  end
+
   module Parsers
     class StringParser
       def char_to_type(char)
@@ -84,7 +87,7 @@ module EDST
 
     class LineItemParser
       def match(ptr)
-        return unless '---' == ptr.peek(3)
+        return nil unless '---' == ptr.peek(3)
         ptr.pos += 3
         ptr.skip(/\s+/)
         AST.new(:ln, value: ptr.scan_until(/$/).strip)
@@ -93,7 +96,7 @@ module EDST
 
     class LabelParser
       def match(ptr)
-        return unless '--' == ptr.peek(2)
+        return nil unless '--' == ptr.peek(2)
         ptr.pos += 2
         ptr.skip(/\s+/)
         AST.new(:label, value: ptr.scan_until(/--/).chop.chop.strip)
@@ -107,7 +110,7 @@ module EDST
       end
 
       def match(ptr)
-        return unless '{' == ptr.peek(1)
+        return nil unless '{' == ptr.peek(1)
         ptr.pos += 1
         children = []
         loop do
@@ -135,15 +138,28 @@ module EDST
       end
     end
 
+    class HeaderParser
+      def match(ptr)
+        return nil unless '~' == ptr.peek(1)
+        ptr.pos += 1
+        if head = ptr.scan(/\S+/)
+          AST.new(:header, value: head)
+        else
+          raise InvalidHeader, "Headers must have at least 1 word"
+        end
+      end
+    end
+
     class RootParser
       def initialize
         @parsers = []
         @parsers << CommentParser.new
         @parsers << DialogueParser.new
-        @parsers << StringParser.new
         @parsers << TagParser.new
+        @parsers << StringParser.new
         @parsers << LineItemParser.new
         @parsers << LabelParser.new
+        @parsers << HeaderParser.new
         @parsers << BlockParser.new(self)
         @parsers << WordParser.new
       end
@@ -183,6 +199,6 @@ module EDST
   end
 
   def self.parse(stream)
-    StreamParser.new.match(stream)
+    StreamParser.new.match(StringScanner.new(stream))
   end
 end
