@@ -13,6 +13,6 @@ describe EDST::Parsers::DialogueParser do
 
   it 'should fail if the dialogue text is missing' do
     ptr = StringScanner.new('@ ThatGuy')
-    expect { subject.match(ptr) }.to raise_error(described_class::DialogueTextMissing)
+    expect { subject.match(ptr) }.to raise_error(EDST::DialogueTextMissing)
   end
 end

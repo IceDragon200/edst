@@ -2,6 +2,14 @@ require 'edst/ast'
 require 'strscan'
 
 module EDST
+  # Error raised when the parser hasn't moved from its current location
+  # after attempting to match
+  class ParserJam < RuntimeError
+  end
+
+  class DialogueTextMissing < RuntimeError
+  end
+
   module Parsers
     class StringParser
       def char_to_type(char)
@@ -46,9 +54,6 @@ module EDST
     end
 
     class DialogueParser
-      class DialogueTextMissing < RuntimeError
-      end
-
       def initialize
         @sp = StringParser.new
       end
@@ -97,11 +102,6 @@ module EDST
 
     # BlockParsers cannot be used without a root parser
     class BlockParser
-      # Error raised when the parser hasn't moved from its current location
-      # after attempting to match
-      class ParserJam < RuntimeError
-      end
-
       def initialize(root)
         @root = root
       end
@@ -113,14 +113,25 @@ module EDST
         loop do
           ptr.skip(/\s+/)
           break if '}' == ptr.peek(1)
-          old_pos = ptr.pos
           if ast = @root.match(ptr)
             children << ast
           else
-            raise ParserJam, "Jammed at pos(#{ptr.pos}), rest: #{ptr.rest.dump}"
+            raise ParserJam, "BlockParser Jammed at pos(#{ptr.pos}), rest: #{ptr.rest.dump}"
           end
         end
+        ptr.pos += 1
         AST.new(:div, children: children)
+      end
+    end
+
+    class WordParser
+      def match(ptr)
+        ptr.skip(/\s+/)
+        if word = ptr.scan(/\S+/)
+          AST.new(:word, value: word)
+        else
+          nil
+        end
       end
     end
 
@@ -134,11 +145,13 @@ module EDST
         @parsers << LineItemParser.new
         @parsers << LabelParser.new
         @parsers << BlockParser.new(self)
+        @parsers << WordParser.new
       end
 
       # @param [StringScanner] ptr
       # @return [AST, nil]
       def match(ptr)
+        ptr.skip(/\s+/)
         @parsers.each do |p|
           if ast = p.match(ptr)
             return ast
@@ -147,8 +160,29 @@ module EDST
         nil
       end
     end
+
+    class StreamParser
+      def initialize
+        @root = RootParser.new
+      end
+
+      def match(ptr)
+        children = []
+        loop do
+          ptr.skip(/\s+/)
+          break if ptr.eos?
+          if ast = @root.match(ptr)
+            children << ast
+          else
+            raise ParserJam, "StreamParser Jammed at pos(#{ptr.pos}), rest: #{ptr.rest.dump}"
+          end
+        end
+        AST.new(:root, children: children)
+      end
+    end
   end
 
-  class Parser
+  def self.parse(stream)
+    StreamParser.new.match(stream)
   end
 end
