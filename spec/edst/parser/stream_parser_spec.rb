@@ -31,11 +31,11 @@ __EOF__
     # uncompressed, there should be 2 children, 1 tag and 1 div
     expect(root_children.size).to eq(3)
     edstdiv = root_children[2]
-    expect(edstdiv.children.size).to eq(4)
+    expect(edstdiv.children.size).to eq(5)
     head = edstdiv.children[1]
     expect(head.children.size).to eq(1)
-    body = edstdiv.children[3]
+    body = edstdiv.children[4]
     # there are just so many words D:
-    expect(body.children.size).to eq(13)
+    expect(body.children.size).to eq(14)
   end
 end
