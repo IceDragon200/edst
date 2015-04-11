@@ -11,6 +11,14 @@ describe EDST::Parsers::TagParser do
     expect(res.value).to eq('I am a Tag')
   end
 
+  it 'should parse an empty value tag' do
+    ptr = StringScanner.new('%tag')
+    res = subject.match(ptr)
+    expect(res).to be_instance_of(EDST::AST)
+    expect(res.key).to eq('tag')
+    expect(res.value).to eq('')
+  end
+
   it 'should parse a long key tag' do
     ptr = StringScanner.new('%%I am the tag key')
     res = subject.match(ptr)
