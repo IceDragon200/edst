@@ -1,2 +1,2 @@
 require 'edst/version'
-require 'edst/lexer'
+require 'edst/parser'
