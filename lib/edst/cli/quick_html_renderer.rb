@@ -12,6 +12,26 @@ require 'colorize'
 
 module EDST
   class QuickHtmlRenderer
+    class Alert
+      def fixme(*args)
+        puts "FIXME: #{args.join(' ')}".colorize(:light_yellow)
+      end
+    end
+
+    class Context
+      include EDST::Partials
+
+      attr_accessor :alert
+      attr_accessor :filename
+      attr_accessor :tree
+      attr_accessor :template_manager
+      attr_accessor :asset_exports
+
+      def initialize
+        @alert = Alert.new
+      end
+    end
+
     def render_file(filename, options)
       tm = TemplateManager.new
       tm.paths.unshift Dir.getwd
@@ -20,7 +40,7 @@ module EDST
       root = EDST.parse File.read(filename)
       root.children.unshift EDST::AST.new(:comment, value: filename)
 
-      ctx = OpenStruct.new
+      ctx = Context.new
       ctx.filename = filename
       ctx.tree = root
       ctx.template_manager = tm

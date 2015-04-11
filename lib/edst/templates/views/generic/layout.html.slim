@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    - head = ((h = tree.search('header').first) && h.value) || File.basename(filename)
+    title = head.titlecase
+    meta charset="utf-8"
+    link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'
+    == "<style>" + template_manager.render_template('stylesheets/edst_generic.scss') + "</style>"
+    /link href='../../edst_generic.css' rel='stylesheet' type='text/css'
+
+  body lang="en"
+    div.content
+      == yield
