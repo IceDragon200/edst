@@ -1,7 +1,12 @@
 require 'active_support/core_ext/object/blank'
+require 'edst/ast'
 
 module EDST
   module AstProcessor
+    # Mereges words together to form paragraphs
+    #
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
     def self.merge_words(asts)
       i = 0
       result = []
@@ -30,24 +35,13 @@ module EDST
       result
     end
 
-    def self.merge_p(asts)
-    end
-
-    def self.merge_ln(asts)
-    end
-
-    def self.merge_tag_div(asts)
-    end
-
-    def self.cleanup(asts)
-    end
-
+    # Merges common nodes together to make the tree more managable.
+    #
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
+    # TODO, break up the process into seperate methods
     def self.merge_asts(asts)
       asts = merge_words asts
-      #asts = merge_p asts
-      #asts = merge_ln asts
-      #asts = merge_tag_div asts
-      #asts = cleanup asts
       i = 0
       result = []
       last_list = nil
@@ -111,6 +105,10 @@ module EDST
       result
     end
 
+    # Sprinkles magic dust on the ast making it easier to use.
+    #
+    # @param [AST] ast  the root ast
+    # @return [AST] processed root
     def self.process(ast)
       ast.dup.tap do |a|
         a.children = merge_asts a.children
