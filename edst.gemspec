@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'tilt',          '~> 2.0'
   s.add_runtime_dependency 'erubis',        '~> 2.7'
   s.add_runtime_dependency 'slim',          '~> 2.1'
+  s.add_runtime_dependency 'sass',          '~> 3.4'
   s.add_runtime_dependency 'activesupport', '~> 4.1'
   s.add_runtime_dependency 'yajl-ruby',     '~> 1.2'
   # dev
