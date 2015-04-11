@@ -6,6 +6,7 @@ require 'yaml'
 describe EDST::Parsers::StreamParser do
   it 'should parse a stream' do
     content = <<__EOF__
+~EDST
 %%edst
 {
   %%head
@@ -28,8 +29,8 @@ __EOF__
     expect(res.kind).to eq(:root)
     root_children = res.children
     # uncompressed, there should be 2 children, 1 tag and 1 div
-    expect(root_children.size).to eq(2)
-    edstdiv = root_children[1]
+    expect(root_children.size).to eq(3)
+    edstdiv = root_children[2]
     expect(edstdiv.children.size).to eq(4)
     head = edstdiv.children[1]
     expect(head.children.size).to eq(1)
