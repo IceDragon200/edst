@@ -58,12 +58,17 @@ module EDST
         last_list = nil unless t.kind == :ln
         last_p = nil unless t.kind == :p
         case t.kind
-        when :p
+        when :p, :string
+          v = t.value
+          v = v.dump if t.kind == :string
           if last_p
-            last_p.value = last_p.value + " " + t.value
+            last_p.value = last_p.value + " " + v
             t = nil
           else
+            # ensure that the element is a p
             last_p = t.dup
+            last_p.kind = :p
+            last_p.value = v
             result << last_p
             t = nil
           end
