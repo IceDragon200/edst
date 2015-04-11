@@ -77,6 +77,15 @@ module EDST
       end
     end
 
+    class LineItemParser
+      def match(ptr)
+        return unless '---' == ptr.peek(3)
+        ptr.pos += 3
+        ptr.skip(/\s+/)
+        AST.new(:ln, value: ptr.scan_until(/$/).strip)
+      end
+    end
+
     class RootParser
       def initialize
         @parsers = []
@@ -84,6 +93,7 @@ module EDST
         @parsers << DialogueParser.new
         @parsers << StringParser.new
         @parsers << TagParser.new
+        @parsers << LineItemParser.new
       end
 
       # @param [StringScanner] ptr
