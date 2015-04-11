@@ -95,6 +95,35 @@ module EDST
       end
     end
 
+    # BlockParsers cannot be used without a root parser
+    class BlockParser
+      # Error raised when the parser hasn't moved from its current location
+      # after attempting to match
+      class ParserJam < RuntimeError
+      end
+
+      def initialize(root)
+        @root = root
+      end
+
+      def match(ptr)
+        return unless '{' == ptr.peek(1)
+        ptr.pos += 1
+        children = []
+        loop do
+          ptr.skip(/\s+/)
+          break if '}' == ptr.peek(1)
+          old_pos = ptr.pos
+          if ast = @root.match(ptr)
+            children << ast
+          else
+            raise ParserJam, "Jammed at pos(#{ptr.pos}), rest: #{ptr.rest.dump}"
+          end
+        end
+        AST.new(:div, children: children)
+      end
+    end
+
     class RootParser
       def initialize
         @parsers = []
@@ -104,6 +133,7 @@ module EDST
         @parsers << TagParser.new
         @parsers << LineItemParser.new
         @parsers << LabelParser.new
+        @parsers << BlockParser.new(self)
       end
 
       # @param [StringScanner] ptr
