@@ -78,7 +78,7 @@ module EDST
     end
 
     def search(str, &block)
-      return to_enum :search unless block
+      return to_enum :search, str unless block
       filters = str.split(/\s+/)
       search_by_filter filters, &block
     end
