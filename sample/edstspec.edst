@@ -1,3 +1,4 @@
+~SPEC:EDST
 %%block_tag
 {
   %empty_tag
@@ -20,4 +21,6 @@
   < Reference >
   *Action*
   * Action *
+
+  @ Dialogue "Yup"
 }

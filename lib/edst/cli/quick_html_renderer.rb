@@ -1,7 +1,7 @@
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/object/blank'
 require 'edst'
-require 'edst/lexer'
+require 'edst/parser'
 require 'edst/template_manager'
 require 'pp'
 require 'slim'
@@ -12,63 +12,24 @@ require 'colorize'
 
 module EDST
   class QuickHtmlRenderer
-    def merge_tokens(tokens)
-      i = 0
-      result = []
-      last_list = nil
-      last_p = nil
-      while i < tokens.size
-        token = tokens[i]
-        t = token.dup
-        last_list = nil unless t.kind == :ln
-        last_p = nil unless t.kind == :p
-        case t.kind
-        when :p
-          if last_p
-            last_p.value = last_p.value + " " + t.value
-            t = nil
-          else
-            last_p = t.dup
-            result << last_p
-            t = nil
-          end
-        when :ln
-          if last_list
-            last_list.add_child t
-            t = nil
-          else
-            last_list = EDST::Lexer::Token.new(:list, children: [t])
-            result << last_list
-            t = nil
-          end
-        when :label
-          if t.value.blank?
-            t.kind = :split
-          end
-        when :tag
-          if t[:type] == 'block'
-            i += 1
-            oi = i
-            until tokens[i].kind == :div
-              fail unless i < tokens.size
-              i += 1
-            end
-            tks = tokens[oi, i - oi]
-            d = tokens[i]
-            t.kind = :div
-            t.children = t.children + tks + d.children
-            t.attributes.delete(:type)
-          end
-        when :el
-          t = nil
-        end
-        if t
-          t.children = merge_tokens t.children
-          result << t
-        end
-        i += 1
+    class Alert
+      def fixme(*args)
+        puts "FIXME: #{args.join(' ')}".colorize(:light_yellow)
       end
-      result
+    end
+
+    class Context
+      include EDST::Partials
+
+      attr_accessor :alert
+      attr_accessor :filename
+      attr_accessor :tree
+      attr_accessor :template_manager
+      attr_accessor :asset_exports
+
+      def initialize
+        @alert = Alert.new
+      end
     end
 
     def render_file(filename, options)
@@ -76,13 +37,12 @@ module EDST
       tm.paths.unshift Dir.getwd
       tm.paths.unshift options.directory
 
-      tokens = EDST::Lexer.lex File.read(filename)
-      tokens = merge_tokens tokens
-      tokens.unshift EDST::Lexer::Token.new(:comment, value: filename)
+      root = EDST.parse File.read(filename)
+      root.children.unshift EDST::AST.new(:comment, value: filename)
 
-      ctx = OpenStruct.new
+      ctx = Context.new
       ctx.filename = filename
-      ctx.tree = EDST::Lexer::Token.new(:root, children: tokens)
+      ctx.tree = root
       ctx.template_manager = tm
       ctx.asset_exports = [] # files that need to be copied as well
 
