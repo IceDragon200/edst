@@ -12,6 +12,8 @@ module EDST
         end
       end
 
+      # @param [StringScanner] ptr
+      # @return [AST, nil]
       def match(ptr)
         case c = ptr.peek(1)
         when '"', '\'', '`'
@@ -25,6 +27,8 @@ module EDST
     end
 
     class TagParser
+      # @param [StringScanner] ptr
+      # @return [AST, nil]
       def match(ptr)
         return nil unless '%' == ptr.peek(1)
         ptr.pos += 1
@@ -49,6 +53,8 @@ module EDST
         @sp = StringParser.new
       end
 
+      # @param [StringScanner] ptr
+      # @return [AST, nil]
       def match(ptr)
         return nil unless '@' == ptr.peek(1)
         ptr.pos += 1
@@ -62,6 +68,8 @@ module EDST
     end
 
     class CommentParser
+      # @param [StringScanner] ptr
+      # @return [AST, nil]
       def match(ptr)
         return nil unless '#' == ptr.peek(1)
         ptr.pos += 1
@@ -78,6 +86,8 @@ module EDST
         @parsers << TagParser.new
       end
 
+      # @param [StringScanner] ptr
+      # @return [AST, nil]
       def match(ptr)
         @parsers.each do |p|
           if ast = p.match(ptr)
