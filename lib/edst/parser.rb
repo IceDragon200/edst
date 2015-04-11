@@ -86,6 +86,15 @@ module EDST
       end
     end
 
+    class LabelParser
+      def match(ptr)
+        return unless '--' == ptr.peek(2)
+        ptr.pos += 2
+        ptr.skip(/\s+/)
+        AST.new(:label, value: ptr.scan_until(/--/).chop.chop.strip)
+      end
+    end
+
     class RootParser
       def initialize
         @parsers = []
@@ -94,6 +103,7 @@ module EDST
         @parsers << StringParser.new
         @parsers << TagParser.new
         @parsers << LineItemParser.new
+        @parsers << LabelParser.new
       end
 
       # @param [StringScanner] ptr
