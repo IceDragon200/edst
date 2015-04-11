@@ -61,9 +61,18 @@ module EDST
       end
     end
 
+    class CommentParser
+      def match(ptr)
+        return nil unless '#' == ptr.peek(1)
+        ptr.pos += 1
+        AST.new(:comment, value: ptr.scan_until(/$/))
+      end
+    end
+
     class RootParser
       def initialize
         @parsers = []
+        @parsers << CommentParser.new
         @parsers << DialogueParser.new
         @parsers << StringParser.new
         @parsers << TagParser.new
