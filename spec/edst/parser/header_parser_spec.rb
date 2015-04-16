@@ -10,4 +10,9 @@ describe EDST::Parsers::HeaderParser do
     expect(res.kind).to eq(:header)
     expect(res.value).to eq('IM:A:HEADER')
   end
+
+  it 'should fail to parse a header without words' do
+    ptr = StringScanner.new('~')
+    expect { subject.match(ptr) }.to raise_error(EDST::InvalidHeader)
+  end
 end
