@@ -6,8 +6,9 @@ module EDST
     # edst file, though I recommend you just use {EDST.parse} and not bother
     # trying to figure out how to use the class.
     class StreamParser < BaseParser
-      def initialize
-        @root = RootParser.new
+      def initialize(options = {})
+        super
+        @root = RootParser.new(options)
       end
 
       # Matches an entire edst stream, this results in a root AST.

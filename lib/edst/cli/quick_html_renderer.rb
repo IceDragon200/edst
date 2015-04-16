@@ -37,7 +37,8 @@ module EDST
       tm.paths.unshift Dir.getwd
       tm.paths.unshift options.directory
 
-      root = EDST.parse File.read(filename)
+      parser_options = options.parser_options || {}
+      root = EDST.parse File.read(filename), parser_options
       root.children.unshift EDST::AST.new(:comment, value: filename)
 
       ctx = Context.new

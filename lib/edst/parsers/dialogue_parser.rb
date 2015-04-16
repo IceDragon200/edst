@@ -6,7 +6,8 @@ module EDST
     # Dialogues are made up of a "@ Speaker" and string statement.
     # If a Speaker's text is missing a DialogueTextMissing exception is raised.
     class DialogueParser < BaseParser
-      def initialize
+      def initialize(options = {})
+        super
         @sp = StringParser.new
       end
 

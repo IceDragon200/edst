@@ -6,18 +6,19 @@ module EDST
     # once.
     # In order to parse a stream, use the {StreamParser} instead.
     class RootParser < BaseParser
-      def initialize
+      def initialize(options = {})
+        super
         @parsers = []
-        @parsers << SpaceParser.new
-        @parsers << CommentParser.new
-        @parsers << DialogueParser.new
-        @parsers << TagParser.new
-        @parsers << StringParser.new
-        @parsers << LineItemParser.new
-        @parsers << LabelParser.new
-        @parsers << HeaderParser.new
-        @parsers << BlockParser.new(self)
-        @parsers << WordParser.new
+        @parsers << SpaceParser.new(options)
+        @parsers << CommentParser.new(options)
+        @parsers << DialogueParser.new(options)
+        @parsers << TagParser.new(options)
+        @parsers << StringParser.new(options)
+        @parsers << LineItemParser.new(options)
+        @parsers << LabelParser.new(options)
+        @parsers << HeaderParser.new(options)
+        @parsers << BlockParser.new(self, options)
+        @parsers << WordParser.new(options)
       end
 
       # Matches all sub statements once, in order to match a file, use the

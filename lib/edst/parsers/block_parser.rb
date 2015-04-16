@@ -6,8 +6,9 @@ module EDST
     # BlockParsers cannot be used without a root parser
     class BlockParser < BaseParser
       # @param [RootParser] root
-      def initialize(root)
+      def initialize(root, options = {})
         @root = root
+        super options
       end
 
       # Matches a block/div
@@ -18,15 +19,16 @@ module EDST
       # @return [AST, nil]
       def match(ptr, depth = 0)
         return nil unless ptr.scan(/\{/)
-        #debug_log depth, ptr, "opened"
+        ctx = OpenStruct.new(id: generate_id, depth: depth)
+        verbose_debug_log ctx, ptr, "opened"
         children = []
         loop do
           if ptr.scan(/\s*\}/)
-            #debug_log depth, ptr, "closed"
+            verbose_debug_log ctx, ptr, "closed"
             break
           end
           if ptr.eos?
-            raise ParserJam.new(ptr, "BlockParser[#{depth}]")
+            raise ParserJam.new(ptr, context_str(ctx))
           elsif ast = @root.match(ptr, depth + 1)
             children << ast
           end
