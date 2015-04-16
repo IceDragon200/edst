@@ -33,6 +33,9 @@
 - render_tree = lambda do |tre, node_ctx, d = 0|
   - tre.each_child do |node|
     - case node.kind
+    - when :dialogue_group
+      .dialogues
+        - render_tree.call node, node_ctx, d + 1
     - when :dialogue
       .dialogue
         .h.speaker = node.key

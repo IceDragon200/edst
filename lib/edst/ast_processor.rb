@@ -3,106 +3,275 @@ require 'edst/ast'
 
 module EDST
   module AstProcessor
-    # Mereges words together to form paragraphs
+    # A helper object for creating grouping Processors
+    class Grouper
+      # Invoke context object for storing information
+      class Context
+        # @!attribute [rw] result
+        #   @return [Array<AST>] the result from the grouping
+        attr_accessor :result
+        # @!attribute [rw] last
+        #   @return [Array<AST>] last note worthy group node
+        attr_accessor :last
+      end
+
+      # Called when a handle_ast returns false, and you need to do some
+      # processing on the last node.
+      #
+      # @param [Context] ctx
+      # @return [void]
+      def flush(ctx)
+        ctx.last = nil
+      end
+
+      # Passes the ast over for handling, if now handling occured, this
+      # should return false to break the current group.
+      #
+      # @param [Context] ctx
+      # @param [AST] ast
+      # @return [Boolean]
+      def handle_ast(ctx, ast)
+        false
+      end
+
+      # Called when a handle_ast returns true
+      #
+      # @param [Context] ctx
+      # @param [AST] ast
+      # @return [void]
+      def on_handled(ctx, ast)
+      end
+
+      # Called when a handle_ast returns false
+      #
+      # @param [Context] ctx
+      # @param [AST] ast
+      # @return [void]
+      def on_not_handled(ctx, ast)
+        flush(ctx)
+        ctx.result << ast
+      end
+
+      # Processes the given asts list and attempts to group them.
+      #
+      # @param [Array<AST>] asts
+      def invoke(asts)
+        ctx = Context.new
+        ctx.result = []
+        ctx.last = nil
+        asts.each do |ast|
+          if handle_ast(ctx, ast)
+            on_handled(ctx, ast)
+          else
+            on_not_handled(ctx, ast)
+          end
+          ast.children = invoke ast.children
+        end
+        flush(ctx)
+        ctx.result
+      end
+    end
+
+    # Bunches words together to form paragraphs
+    class WordGrouper < Grouper
+      # (see Grouper#flush)
+      def flush(ctx)
+        return unless ctx.last
+        # words are normally packed into the p as an Array, they need to be
+        # joined back together to form proper paragraphs.
+        ctx.last.value = ctx.last.value.join(' ')
+        ctx.last = nil
+      end
+
+      # (see Grouper#handle_ast)
+      def handle_ast(ctx, ast)
+        if ast.kind == :word
+          ctx.last ||= begin
+            AST.new(:p, value: []).tap { |l| ctx.result << l }
+          end
+          ctx.last.value << ast.value
+          return true
+        end
+        false
+      end
+    end
+
+    class DialogueGrouper < Grouper
+      # (see Grouper#handle_ast)
+      def handle_ast(ctx, ast)
+        if ast.kind == :dialogue
+          ctx.last ||= begin
+            AST.new(:dialogue_group).tap { |l| ctx.result << l }
+          end
+          ctx.last.children << ast
+          return true
+        # we can inject comments into the dialogue groups
+        elsif ctx.last and ast.kind == :comment
+          ctx.last.children << ast
+          return true
+        end
+        false
+      end
+    end
+
+    # Joins multiple :p nodes together to get rid excess paragraph nodes,
+    # loose :string nodes will be merged as well.
+    class ParagraphGrouper < Grouper
+      # (see Grouper#flush)
+      def flush(ctx)
+        return unless ctx.last
+        ctx.last.value = ctx.last.value.strip
+        ctx.last = nil
+      end
+
+      # (see Grouper#handle_ast)
+      def handle_ast(ctx, ast)
+        if ast.kind == :p || ast.kind == :string
+          ctx.last ||= begin
+            AST.new(:p, value: '').tap { |l| ctx.result << l }
+          end
+          v = ast.value
+          v = v.dump if ast.kind == :string
+          ctx.last.value = ctx.last.value + " " + v
+          return true
+        end
+        false
+      end
+    end
+
+    # Groups :ln nodes together to form :list nodes
+    class ListItemGrouper < Grouper
+      # (see Grouper#handle_ast)
+      def handle_ast(ctx, ast)
+        if ast.kind == :ln
+          ctx.last ||= begin
+            AST.new(:list).tap { |l| ctx.result << l }
+          end
+          ctx.last.children << ast
+          return true
+        elsif ctx.last and ast.kind == :comment
+          ctx.last.children << ast
+          return true
+        end
+        false
+      end
+    end
+
+    # Creates a new grouper from the grouper class and calls invoke with the
+    # provided asts.
+    #
+    # @param [Class<Grouper>] grouper
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
+    def self.invoke_grouper(grouper, asts)
+      grouper.new.invoke(asts)
+    end
+
+    # Merges words together to form paragraphs
     #
     # @param [Array<AST>] asts
     # @return [Array<AST>]
-    def self.merge_words(asts)
+    def self.group_words(asts)
+      invoke_grouper WordGrouper, asts
+    end
+
+    # Groups consecutive dialogues together in a :dialogue_group
+    #
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
+    def self.group_dialogues(asts)
+      invoke_grouper DialogueGrouper, asts
+    end
+
+    # Joins consecutive paragraphs together
+    #
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
+    def self.group_paragraphs(asts)
+      invoke_grouper ParagraphGrouper, asts
+    end
+
+    # Groups :ln nodes together to form :list nodes
+    #
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
+    def self.group_list_items(asts)
+      invoke_grouper ListItemGrouper, asts
+    end
+
+    # Empty labels will be treated as splitter nodes
+    #
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
+    def self.replace_empty_labels(asts)
+      asts.map do |node|
+        result = case node.kind
+        when :label
+          node.value.blank? ? AST.new(:split) : node.dup
+        else
+          node.dup
+        end
+        result.children = replace_empty_labels result.children
+        result
+      end
+    end
+
+    # Merges block tags with the div that follows it to form a div with a key.
+    #
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
+    def self.merge_block_tags(asts)
       i = 0
       result = []
-      last = nil
-      fl = lambda do
-        if last
-          last.value = last.value.join(' ')
-          last = nil
-        end
-      end
-      asts.each do |ast|
-        if ast.kind == :word
-          last ||= begin
-            l = AST.new(:p, value: [])
-            result << l
-            l
+      while i < asts.size
+        ast = asts[i]
+        t = ast.dup
+        if t.kind == :tag and t[:type] == 'block'
+          i += 1
+          oi = i
+          until asts[i].kind == :div
+            fail unless i < asts.size
+            i += 1
           end
-          last.value << ast.value
-        else
-          fl.call
-          result << ast
+          tks = asts[oi, i - oi]
+          d = asts[i]
+          t.kind = :div
+          t.children = t.children + tks + d.children
+          t.attributes.delete(:type)
+          t.children = merge_block_tags t.children
         end
-        ast.children = merge_words ast.children
+        result << t
+        i += 1
       end
-      fl.call
       result
+    end
+
+    # Removes all :el nodes from the tree
+    #
+    # @param [Array<AST>] asts
+    # @return [Array<AST>]
+    def self.drop_empty_lines(asts)
+      asts.each_with_object([]) do |node, result|
+        next if node.kind == :el
+        node = node.dup
+        node.children = drop_empty_lines node.children
+        result << node
+      end
     end
 
     # Merges common nodes together to make the tree more managable.
     #
     # @param [Array<AST>] asts
     # @return [Array<AST>]
-    # TODO, break up the process into seperate methods
-    def self.merge_asts(asts)
-      asts = merge_words asts
-      i = 0
-      result = []
-      last_list = nil
-      last_p = nil
-      while i < asts.size
-        ast = asts[i]
-        t = ast.dup
-        last_list = nil unless t.kind == :ln
-        last_p = nil unless t.kind == :p
-        case t.kind
-        when :p, :string
-          v = t.value
-          v = v.dump if t.kind == :string
-          if last_p
-            last_p.value = last_p.value + " " + v
-            t = nil
-          else
-            # ensure that the element is a p
-            last_p = t.dup
-            last_p.kind = :p
-            last_p.value = v
-            result << last_p
-            t = nil
-          end
-        when :ln
-          if last_list
-            last_list.add_child t
-            t = nil
-          else
-            last_list = EDST::AST.new(:list, children: [t])
-            result << last_list
-            t = nil
-          end
-        when :label
-          if t.value.blank?
-            t.kind = :split
-          end
-        when :tag
-          if t[:type] == 'block'
-            i += 1
-            oi = i
-            until asts[i].kind == :div
-              fail unless i < asts.size
-              i += 1
-            end
-            tks = asts[oi, i - oi]
-            d = asts[i]
-            t.kind = :div
-            t.children = t.children + tks + d.children
-            t.attributes.delete(:type)
-          end
-        when :el
-          t = nil
-        end
-        if t
-          t.children = merge_asts t.children
-          result << t
-        end
-        i += 1
-      end
-      result
+    def self.process_asts(asts)
+      asts = group_words asts
+      asts = group_paragraphs asts
+      asts = drop_empty_lines asts
+      asts = group_dialogues asts
+      asts = group_list_items asts
+      asts = replace_empty_labels asts
+      asts = merge_block_tags asts
+      asts
     end
 
     # Sprinkles magic dust on the ast making it easier to use.
@@ -111,7 +280,7 @@ module EDST
     # @return [AST] processed root
     def self.process(ast)
       ast.dup.tap do |a|
-        a.children = merge_asts a.children
+        a.children = process_asts a.children
       end
     end
   end
