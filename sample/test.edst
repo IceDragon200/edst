@@ -1,0 +1,15 @@
+%%block
+{
+  %a A
+  %b B
+  %c C
+  %d D
+  %%block_e
+  {
+    # some items
+    --- A
+    --- B
+    --- C
+    --- D
+  }
+}

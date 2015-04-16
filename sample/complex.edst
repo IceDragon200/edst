@@ -1,0 +1,105 @@
+#
+# edst/sample/complex.edst
+#
+~EXAMPLE:EDST
+%%head
+{
+  %name Complex EDST example
+  This is an example of a more complex .edst format file.
+
+  %%note
+  {
+    The html renderer by default has special a special css format for note
+    tags.
+  }
+}
+%%body
+{
+-- Raw Parsing --
+
+  The EDST::Parser isn't exactly the smartest thing on the earth, its raw
+  parsed data has lots of useless nodes that will need further processing to
+  make them useful.
+
+-- --
+
+-- AstProcessor --
+
+  The EDST::AstProcessor is used to merge common nodes and clean up the :word
+  node mess produced by the Parser.
+  By default, it will merge words together to form initial paragraphs, and
+  then later merge those paragraphs together to create larger ones.
+  It is also in this process that it merges block tag nodes with their div nodes.
+
+-- --
+
+-- There is no hard or fast rule --
+
+  EDST is designed to used for writing and tagging, as well as being somewhat
+  easy to navigate the AST to extract data.
+
+-- --
+
+-- Dialogue --
+
+  EDST was originally designed for writing story board scripts, as such
+  it has a special form for dialogue.
+
+    @ IceDragon "Dialogues take the form of @ <Speaker> <Message>"
+
+  The message is parsed using the StringParser, however its node is never
+  included in the tree, its value is taken and placed on the dialogue node
+  instead.
+
+-- --
+
+-- Common Nodes --
+
+  The following is a list of most common nodes you'll encounter in the AST
+
+  # You don't need to state that the block is a list, it will automatically
+  # group multiple list items
+  %%list.common_nodes
+  {
+    ---
+    # root is produced from using the EDST.parse method
+    --- :root
+    # there is usually only 1 header per EDST file, though is is not
+    # some rule that is enforced by EDST.
+    --- :header
+    # Comments are lines that start with a #, you cannot inline a comment.
+    --- :comment
+    # :labels are phrases enclosed in a -- pair, and empty label is transformed
+    # as :splitter
+    --- :label
+    --- :splitter
+    # these are list related node kinds
+    # list items (:ln) are start with ---, :list are automatically generated
+    # with 1 or more :ln items as its children.
+    --- :list
+    --- :ln
+    # these are dialogue related nodes, a :dialogue_group will contain
+    # multiple :dialogue nodes, and possibly comments.
+    # :dialogue nodes, will have their key equal to the Speaker, and their
+    # value as the message
+    --- :dialogue_group
+    --- :dialogue
+    # :tag nodes will appear as key/value nodes, while block tags will become divs
+    --- :tag
+    # :div nodes are usually a combo of %%block and { }, its possibly to have
+    # free floating divs
+    --- :div
+    # :p nodes are a dump node for things that didn't match the rest of the parsing,
+    # but most times, its just words.
+    # :string are enclosed with a ` or a ", though, they are transformed into
+    # a :p node, after call #dump on its contents
+    --- :p
+    --- :string
+    # :el are empty paragraphs, they won't appear in a regular parse, but
+    # may appear in a raw_parse, their use is to stop the paragraph grouper
+    # from joining all the paragraphs together.
+    --- :el
+  }
+
+-- --
+}
