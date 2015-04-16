@@ -96,12 +96,20 @@ module EDST
       end
     end
 
-    class DialogueGrouper < Grouper
+    # base class for generic list grouping
+    class BaseListGrouper < Grouper
+      # @param [Symbol] item_kind  the kind of nodes to group together
+      def initialize(item_kind, group_name)
+        super()
+        @item_kind = item_kind
+        @group_name = group_name
+      end
+
       # (see Grouper#handle_ast)
       def handle_ast(ctx, ast)
-        if ast.kind == :dialogue
+        if ast.kind == @item_kind
           ctx.last ||= begin
-            AST.new(:dialogue_group).tap { |l| ctx.result << l }
+            AST.new(@group_name).tap { |l| ctx.result << l }
           end
           ctx.last.children << ast
           return true
@@ -111,6 +119,13 @@ module EDST
           return true
         end
         false
+      end
+    end
+
+    # Groups dialogues together into a dialogue_group
+    class DialogueGrouper < BaseListGrouper
+      def initialize
+        super :dialogue, :dialogue_group
       end
     end
 
@@ -140,20 +155,9 @@ module EDST
     end
 
     # Groups :ln nodes together to form :list nodes
-    class ListItemGrouper < Grouper
-      # (see Grouper#handle_ast)
-      def handle_ast(ctx, ast)
-        if ast.kind == :ln
-          ctx.last ||= begin
-            AST.new(:list).tap { |l| ctx.result << l }
-          end
-          ctx.last.children << ast
-          return true
-        elsif ctx.last and ast.kind == :comment
-          ctx.last.children << ast
-          return true
-        end
-        false
+    class ListItemGrouper < BaseListGrouper
+      def initialize
+        super :ln, :list
       end
     end
 
