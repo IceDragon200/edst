@@ -6,6 +6,7 @@ module EDST
     # once.
     # In order to parse a stream, use the {StreamParser} instead.
     class RootParser < BaseParser
+      # (see BaseParser#initialize)
       def initialize(options = {})
         super
         @parsers = []

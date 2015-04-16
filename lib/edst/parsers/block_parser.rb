@@ -6,6 +6,7 @@ module EDST
     # BlockParsers cannot be used without a root parser
     class BlockParser < BaseParser
       # @param [RootParser] root
+      # (see BaseParser#initialize)
       def initialize(root, options = {})
         @root = root
         super options

@@ -2,6 +2,8 @@ require 'active_support/core_ext/object/blank'
 require 'edst/ast'
 
 module EDST
+  # Module which defines helper methods and classes for processing ASTs
+  # and making them somewhat saner.
   module AstProcessor
     # A helper object for creating grouping Processors
     class Grouper

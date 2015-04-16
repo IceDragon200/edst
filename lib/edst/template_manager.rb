@@ -1,16 +1,21 @@
 require 'tilt'
 
 module EDST
+  # A simple class for finding, loading and using tilt templates on the
+  # file system.
   class TemplateManager
-    # @return [String]
+    # @return [String] The default location to look for templates from
     ROOT_PATH = File.dirname(__FILE__)
 
     # @return [Array<String, Tilt>]
     @@glob_templates = {}
 
-    # @return [Array<String>]
+    # @!attribute paths
+    #   @return [Array<String>] paths to look for templates in
     attr_accessor :paths
-    attr_accessor :log
+    # @!attribute logger
+    #   @return [#puts] debug logger
+    attr_accessor :logger
 
     # @param [Hash<Symbol, Object>] options
     def initialize(**options)
@@ -21,14 +26,21 @@ module EDST
       @paths << ENV['EDST_TEMPLATE_PATH']
       @paths << File.expand_path('templates', root_path)
       @paths.compact!
-      @log = nil
+      @logger = nil
     end
 
+    # Yields the internal logger if it exists.
+    #
+    # @yieldparam [#puts] logger
+    # @return [void]
     def debug_log
-      yield @log if @log
+      yield @logger if @logger
     end
 
+    # The directory where the template_manager is located.
+    #
     # @return [String]
+    # @api
     def root_path
       ROOT_PATH
     end
@@ -42,8 +54,11 @@ module EDST
       end
     end
 
-    # @param [String]
-    # @return [String]
+    # Tries to find a template with the given name, if not template was found
+    # nil is returned, else the full path to the template is returned.
+    #
+    # @param [String] name
+    # @return [String, nil]
     def find_file(name)
       @paths.each do |dirname|
         path = File.expand_path(name, dirname)
@@ -53,6 +68,9 @@ module EDST
       return nil
     end
 
+    # Loads a template using tilt, or returns an existing one from the
+    # template cache.
+    #
     # @param [String] name
     # @return [Tilt] template
     def load_template(name)
@@ -65,17 +83,26 @@ module EDST
       end
     end
 
+    # Loads and renders a template, the extra args depend on the template.
+    #
     # @param [String] name
+    # @param [Object] args
+    # @return [String] rendered result
     def render_template(name, *args, &block)
       load_template(name).render(*args, &block)
     end
   end
 
   module Partials
-    # @return [EDST::TemplateManager]
+    # @!attribute template_manager
+    #   @return [TemplateManager]
     attr_accessor :template_manager
 
+    # Renders a template using self as the context
+    # see {TemplateManager#render_template}
+    #
     # @param [String] name
+    # @return [String] rendered content
     def partial(name, *args, &block)
       @template_manager.render_template(name, self, *args, &block)
     end

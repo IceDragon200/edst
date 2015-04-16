@@ -11,20 +11,35 @@ require 'fileutils'
 require 'colorize'
 
 module EDST
+  # EDST's generic HTML renderer
   class QuickHtmlRenderer
+    # Logging interface for the Renderer
     class Alert
+      # @param [Object] args
+      # @return [void]
       def fixme(*args)
         puts "FIXME: #{args.join(' ')}".colorize(:light_yellow)
       end
     end
 
+    # Renderer context information
     class Context
       include EDST::Partials
 
+      # @!attribute alert
+      #   @return [Alert] logger
       attr_accessor :alert
+      # @!attribute filename
+      #   @return [String] original filename
       attr_accessor :filename
+      # @!attribute tree
+      #   @return [AST] the ast to render
       attr_accessor :tree
+      # @!attribute template_manager
+      #   @return [TemplateManager] the template manager
       attr_accessor :template_manager
+      # @!attribute asset_exports
+      #   @return [Array<String>] files to copy after rendering
       attr_accessor :asset_exports
 
       def initialize
@@ -32,7 +47,12 @@ module EDST
       end
     end
 
-    def render_file(filename, options)
+    # Parses an EDST file `filename` and renders it as HTML
+    #
+    # @param [String] filename
+    # @param [Hash<Symbol, Object>] options
+    # @return [void]
+    def render_file(filename, options = {})
       tm = TemplateManager.new
       tm.paths.unshift Dir.getwd
       tm.paths.unshift options.directory
@@ -71,6 +91,7 @@ module EDST
       end
     end
 
+    # (see #render_file)
     def self.render_file(filename, options)
       new.render_file filename, options
     end

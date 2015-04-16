@@ -29,5 +29,3 @@ class String
     index_of_closest 1, q, from
   end
 end
-
-puts String

@@ -3,15 +3,26 @@ require 'edst/core_ext/string'
 
 module EDST
   module Parsers
+    # Base class for all parsers.
     class BaseParser
       # @!attribute [r] id
       #   @return [String]
       attr_reader :id
 
+      # @!attribute verbose
+      #   @return [Boolean]
+      attr_reader :verbose
+
+      # @!attribute logger
+      #   @return [#puts]
+      attr_reader :logger
+
       # @param [Hash<Symbol, Object>] options
+      # @option options [Boolean] :verbose  debug
       def initialize(options = {})
         @id = generate_id
         @verbose = options.fetch(:verbose, false)
+        @logger = options.fetch(:logger, STDOUT)
       end
 
       # Generates a 8 character id, used for debugging
@@ -42,7 +53,7 @@ module EDST
 
       # Returns the sourrounding lines from the current ptr position
       #
-      # @param [StringScanner]
+      # @param [StringScanner] ptr
       # @return [Array<String>]
       # @api
       def debug_lines(ptr)
@@ -90,14 +101,14 @@ module EDST
       # @api
       def debug_log(ctx, ptr, msg)
         prev_line, line, next_line = *debug_lines(ptr)
-        puts "#{context_debug_str(ctx)} #{msg} .. pos: (#{ptr_pos_str(ptr)}), prev_line: (#{prev_line.strip}), line: (#{line.strip})"
+        @logger.puts "#{context_debug_str(ctx)} #{msg} .. pos: (#{ptr_pos_str(ptr)}), prev_line: (#{prev_line.strip}), line: (#{line.strip})"
       end
 
       # (see #debug_log)
       # @api
-      def verbose_debug_log(*args)
+      def verbose_debug_log(ctx, ptr, msg)
         return unless @verbose
-        debug_log(*args)
+        debug_log(ctx, ptr, msg)
       end
     end
   end
