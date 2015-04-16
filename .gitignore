@@ -1,4 +1,6 @@
 *.gem
-Gemfile.lock
+/.sass-cache
+/.yardoc
 /coverage
 /doc
+Gemfile.lock
