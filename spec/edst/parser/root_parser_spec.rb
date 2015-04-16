@@ -12,4 +12,9 @@ describe EDST::Parsers::RootParser do
     expect(res.kind).to eq(:div)
     expect(res.children[0].kind).to eq(:tag)
   end
+
+  it 'should jam with an invalid block' do
+    ptr = StringScanner.new("{\n%tag thingy\n")
+    expect { subject.match(ptr) }.to raise_error EDST::ParserJam
+  end
 end

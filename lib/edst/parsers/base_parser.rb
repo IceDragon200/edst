@@ -1,3 +1,4 @@
+require 'edst/core_ext/string'
 require 'ostruct'
 
 module EDST
@@ -28,28 +29,32 @@ module EDST
       # @param [String] str
       # @return [Array<Integer>] the start and end point of the previous line
       # @api
-      def prev_line(pos, str)
+      def prev_line_pos(pos, str)
         s = pos
         e = s
         nl = /[\n\r]/
-
-        until str[s] =~ nl
-          break s = 0 if s <= 0
-          s -= 1
-        end
-        s += 1 if str[s] =~ nl
-
-        until str[e] =~ nl
-          break e = str.size if e >= str.size
-          e += 1
-        end
-        e -= 1 if str[e] =~ nl
-
+        s = str.index_of_prev_closest(nl, s)
+        e = str.index_of_next_closest(nl, e)
         return s, e
+      end
+
+      # Returns the sourrounding lines from the current ptr position
+      #
+      # @param [StringScanner]
+      # @return [Array<String>]
+      # @api
+      def debug_lines(ptr)
+        s, e = prev_line_pos ptr.pos - 1, ptr.string
+        s2, e2 = prev_line_pos s - 2, ptr.string
+        line = ptr.string[s..e]
+        prev_line = ptr.string[s2..e2]
+        next_line = ptr.rest[/\n(.*)$/] || ''
+        return prev_line, line, next_line
       end
 
       # Returns a string for debugging context information
       #
+      # @param [OpenStruct] ctx
       # @return [String]
       # @api
       def context_str(ctx)
@@ -58,11 +63,21 @@ module EDST
 
       # Returns a prefix string for debugging
       #
+      # @param [OpenStruct] ctx
       # @return [String]
       # @api
       def context_debug_str(ctx)
         depth_str = '%-04s' % ctx.depth
         "#{' ' * ctx.depth}#{context_str(ctx)}"
+      end
+
+      # Returns the pointer position as a fractional string
+      #
+      # @param [StringScanner] ptr
+      # @return [String]
+      # @api
+      def ptr_pos_str(ptr)
+        "#{ptr.pos}/#{ptr.string.size}"
       end
 
       # Prints debug information out to the console.
@@ -72,12 +87,8 @@ module EDST
       # @param [String] msg
       # @api
       def debug_log(ctx, ptr, msg)
-        s, e = prev_line ptr.pos - 1, ptr.string
-        s2, e2 = prev_line s - 2, ptr.string
-        line = ptr.string[s..e]
-        prev_line = ptr.string[s2..e2]
-        next_line = (ptr.rest[/\n(.*)$/] || '')
-        puts "#{context_debug_str(ctx)} #{msg} .. pos: (#{ptr.pos}/#{ptr.string.size}), prev_line: (#{prev_line.strip}), line: (#{line.strip})"
+        prev_line, line, next_line = *debug_lines(ptr)
+        puts "#{context_debug_str(ctx)} #{msg} .. pos: (#{ptr_pos_str(ptr)}), prev_line: (#{prev_line.strip}), line: (#{line.strip})"
       end
 
       # (see #debug_log)
