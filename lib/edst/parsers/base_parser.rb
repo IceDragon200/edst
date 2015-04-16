@@ -1,5 +1,5 @@
-require 'edst/core_ext/string'
 require 'ostruct'
+require 'edst/core_ext/string'
 
 module EDST
   module Parsers
@@ -35,6 +35,8 @@ module EDST
         nl = /[\n\r]/
         s = str.index_of_prev_closest(nl, s)
         e = str.index_of_next_closest(nl, e)
+        s = 0 if s < 0
+        e = str.size if e < 0
         return s, e
       end
 

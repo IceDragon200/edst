@@ -5,13 +5,12 @@ class String
   # @param [String, Regexp] q  query
   # @param [Integer] from  starting position
   def index_of_closest(d, q, from = 0)
-    s = from
-    until q === str[s]
-      break s = 0 if s <= 0
-      s += d
+    i = from
+    until q === self[i]
+      return -1 if (d < 0) ? (i <= 0) : (i >= size)
+      i += d
     end
-    s -= d if q === str[s]
-    s
+    i
   end
 
   # Finds the previous closest thing that matches the query.
@@ -30,3 +29,5 @@ class String
     index_of_closest 1, q, from
   end
 end
+
+puts String
