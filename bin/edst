@@ -1,14 +1,20 @@
 #!/usr/bin/env ruby
 require 'edst/cli/quick_html_renderer'
+require 'edst/cli/markdown_renderer'
 require 'ostruct'
 require 'optparse'
 
 options = OpenStruct.new(
   directory: Dir.getwd,
+  render_engine: 'html',
   template: ENV['EDST_HTML_TEMPLATE'].presence
 )
 
 parser = OptionParser.new do |opts|
+  opts.on '-r', '--render-engine TYPE', String, 'Rendering engine' do |v|
+    options.render_engine = v
+  end
+
   opts.on '-d', '--directory NAME', String, 'Output directory' do |v|
     options.directory = v
   end
@@ -19,7 +25,15 @@ parser = OptionParser.new do |opts|
 end
 
 argv = parser.parse(ARGV)
-renderer = EDST::QuickHtmlRenderer.new
+renderer = case options.render_engine
+when 'html'
+  EDST::QuickHtmlRenderer.new
+when 'markdown', 'md'
+  EDST::MarkdownRenderer.new
+else
+  abort 'Invalid render-engine (try html, or markdown)'
+end
+
 argv.each do |filename|
   renderer.render_file filename, options
 end
