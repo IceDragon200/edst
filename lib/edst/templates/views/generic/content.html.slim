@@ -8,7 +8,7 @@
       - bsn = File.basename(fn)
       - ex = "images/#{bsn}"
       - asset = [fn, ex]
-      - asset_exports << asset # [original_filename, filename_to_export_to]
+      - asset_exports << asset
       - (node_ctx.refs ||= {})[ref] = asset if ref.present?
       a.image-ref id="#{ref}" href="./#{ex}"
         .image-title
@@ -41,8 +41,7 @@
         .h.speaker = node.key
         .p.text = node.value
     - when :ln
-      li
-        = node.value
+      li = node.value
     - when :list
       ul
         - render_tree.call node, node_ctx, d + 1

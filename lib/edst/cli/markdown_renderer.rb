@@ -1,31 +1,20 @@
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/object/blank'
-require 'edst'
 require 'edst/parser'
-require 'edst/cli/common'
 require 'edst/template_manager'
 require 'edst/partials'
-require 'pp'
-require 'slim'
-require 'tilt'
-require 'ostruct'
-require 'fileutils'
-require 'colorize'
+require 'edst/cli/common'
+require 'erubis'
 
 module EDST
-  # EDST's generic HTML renderer
-  class QuickHtmlRenderer
-    # Parses an EDST file `filename` and renders it as HTML
-    #
-    # @param [String] filename
-    # @param [Hash<Symbol, Object>] options
-    # @return [void]
+  class MarkdownRenderer
     def render_file(filename, options = {})
       tm = TemplateManager.new
       tm.paths.unshift Dir.getwd
       tm.paths.unshift options.directory
 
       parser_options = options.parser_options || {}
+
       root = EDST.parse File.read(filename), parser_options
       root.children.unshift EDST::AST.new(:comment, value: filename)
 
@@ -35,9 +24,9 @@ module EDST
       ctx.template_manager = tm
       ctx.asset_exports = [] # files that need to be copied as well
 
-      result = tm.render_template(options.template || 'views/generic.html.slim', ctx)
+      result = tm.render_template(options.template || 'views/markdown.md.erb', ctx)
       basename = File.basename(filename, File.extname(filename))
-      out = File.join(options.directory, "#{basename}.html")
+      out = File.join(options.directory, "#{basename}.md")
 
       puts "\tRENDER #{out}".colorize(:light_green)
       File.write(out, result)
@@ -57,11 +46,6 @@ module EDST
           puts "\tNEW ASSET #{d}".colorize(:light_green)
         end
       end
-    end
-
-    # (see #render_file)
-    def self.render_file(filename, options)
-      new.render_file filename, options
     end
   end
 end

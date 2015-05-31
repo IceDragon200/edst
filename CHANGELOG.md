@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+## 0.25.0
+Added Markdown template
+
 ## 0.23.2
 Generic templates now handle special tags that start with a `&`
 
