@@ -35,20 +35,7 @@
 <% end %>
 <% render_header = lambda do |value, depth = 0| %>
   <% return unless value.present? %>
-  <% case depth %>
-  <% when 0 %>
-# <%= value %>
-  <% when 1 %>
-## <%= value %>
-  <% when 2 %>
-### <%= value %>
-  <% when 3 %>
-#### <%= value %>
-  <% when 4 %>
-##### <%= value %>
-  <% when 5 %>
-###### <%= value %>
-  <% end %>
+<%= ("#" * (depth + 1)) << " " << value %>
 <% end %>
 <% render_tree = lambda do |tre, depth = 0| %>
   <% tre.each_child do |node| %>
