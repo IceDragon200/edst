@@ -1,4 +1,5 @@
 require 'edst/partials'
+require 'edst/helpers/text_helper'
 
 module EDST
   # Logging interface for the Renderer
@@ -13,6 +14,7 @@ module EDST
   # Renderer context information
   class Context
     include EDST::Partials
+    include EDST::Helpers::TextHelper
 
     # @!attribute alert
     #   @return [Alert] logger

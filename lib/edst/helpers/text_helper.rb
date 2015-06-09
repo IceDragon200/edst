@@ -1,3 +1,5 @@
+require 'edst/core_ext/string'
+
 module EDST
   module Helpers
     module TextHelper
@@ -11,15 +13,30 @@ module EDST
         end * "\n"
       end
 
-      def edst_escape_y(str)
+      def edst_escape_yield(str)
         result = str.gsub(/<([^<>]+)>/) { yield :ref, $1 }
         result.gsub!(/\*([^\*]+)\*/) { yield :action, $1 }
         result.gsub!(/`([^`]+)`/) { yield :fence, $1 }
         result
       end
 
+      def edst_escape(str)
+        edst_escape_yield(str) do |key, value|
+          case key
+          when :ref
+            "<#{value}>"
+          when :action
+            "*#{value}*"
+          when :fence
+            "`#{value}`"
+          else
+            value
+          end
+        end
+      end
+
       def escape_lines(str, width)
-        word_wrap(edst_escape(str), line_width: width).each_line.map do |line|
+        word_wrap(edst_escape(str.deflate), line_width: width).each_line.map do |line|
           yield line.chomp
         end.join("\n")
       end
