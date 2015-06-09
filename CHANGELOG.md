@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+## 0.26.0
+Added Text template
+
 ## 0.25.0
 Added Markdown template
 
