@@ -1,6 +1,8 @@
 #!/usr/bin/env ruby
+require 'edst/cli/base_renderer'
 require 'edst/cli/quick_html_renderer'
 require 'edst/cli/markdown_renderer'
+require 'edst/cli/text_renderer'
 require 'ostruct'
 require 'optparse'
 
@@ -25,15 +27,11 @@ parser = OptionParser.new do |opts|
 end
 
 argv = parser.parse(ARGV)
-renderer = case options.render_engine
-when 'html'
-  EDST::QuickHtmlRenderer.new
-when 'markdown', 'md'
-  EDST::MarkdownRenderer.new
-else
-  abort 'Invalid render-engine (try html, or markdown)'
-end
 
-argv.each do |filename|
-  renderer.render_file filename, options
+if renderer = EDST::BaseRenderer[options.render_engine]
+  argv.each do |filename|
+    renderer.render_file filename, options
+  end
+else
+  abort "Invalid render_engine #{options.render_engine}"
 end
