@@ -10,6 +10,7 @@ require 'colorize'
 require 'tilt'
 
 module EDST
+  # Base class for Renderers
   class BaseRenderer
     @@renderers = {}
 
@@ -19,9 +20,14 @@ module EDST
       fail
     end
 
+    # File extension for the renderer output files
+    #
     # @return [String]
-    # @abstract
     def output_extname
+      # given, template.md.erb
+      # the following will first remove the .erb extension and then return
+      # the .md extension.
+      # tl;dr: it returns the second extension in a filename
       File.extname(File.basename(default_template_name,
         File.extname(default_template_name)))
     end

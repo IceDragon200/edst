@@ -7,6 +7,8 @@ module EDST
   # Error raised when the parser hasn't moved from its current location
   # after attempting to match
   class ParserJam < RuntimeError
+    # @param [StringScanner] ptr  current string scanner
+    # @param [String] n  namespace
     def initialize(ptr, n = nil)
       msg = "Jam at pos(#{ptr.pos}/#{ptr.string.size})"
       msg = "#{n} #{msg}" if n
