@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+## 0.26.1
+Added missing tag macros to Markdown renderer
+
 ## 0.26.0
 Added Text template
 

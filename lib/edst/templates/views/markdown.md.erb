@@ -1,5 +1,9 @@
-<% render_tag = lambda do |node, node_ctx, d = 0| %>
-<%   tag_name = node.key %> %>
+<% render_header = lambda do |value, depth = 0| %>
+<%   return unless value.present? %>
+<%=  ("#" * (depth + 1)) << " " << value %>
+<% end %>
+<% render_tag = lambda do |node, depth = 0| %>
+<%   tag_name = node.key %>
 <%   if tag_name.start_with?('&') %>
 <%     case tag_name[1...tag_name.length] %>
 <%     when /image(?:#(\S+))?/ %>
@@ -9,17 +13,17 @@
 <%       ex = "images/#{bsn}" %>
 <%       asset = [fn, ex] %>
 <%       asset_exports << asset %>
-<%       (node_ctx.refs ||= {})[ref] = asset if ref.present? %>
+[![<%= ref %>](<%= ex %>)](<%= ex %>) <%= ref.titlecase %>
 <%     else %>
 <%       alert.fixme node.kind, node.key, node.value %>
 <%     end %>
 <%   else %>
-<%     tag_id = "tag-#{tag_name.downcase}" %>
+<%     if node.value %>
+| <%= node.key %> | <%= node.value %> |
+<%     else %>
+<% render_header.call(node.key, depth) %>
+<%     end %>
 <%   end %>
-<% end %>
-<% render_header = lambda do |value, depth = 0| %>
-<%   return unless value.present? %>
-<%=  ("#" * (depth + 1)) << " " << value %>
 <% end %>
 <% render_tree = lambda do |tre, depth = 0| %>
 <%   tre.each_child do |node| %>
@@ -47,11 +51,7 @@ _<%= node.value %>_
 <%     when :comment %>
 `<%= node.value %>`
 <%     when :tag %>
-<%       if node.value %>
-| <%= node.key %> | <%= node.value %> |
-<%       else %>
-<% render_header.call(node.key, depth) %>
-<%       end %>
+<%       render_tag.call(node, depth) %>
 <%     when :div %>
 <% render_header.call(node.key, depth) %>
 <% render_tree.call(node, depth.succ) %>
