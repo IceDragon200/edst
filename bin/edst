@@ -8,13 +8,13 @@ require 'optparse'
 
 options = OpenStruct.new(
   directory: Dir.getwd,
-  render_engine: 'html',
+  render_engines: [],
   template: ENV['EDST_HTML_TEMPLATE'].presence
 )
 
 parser = OptionParser.new do |opts|
-  opts.on '-r', '--render-engine TYPE', String, 'Rendering engine' do |v|
-    options.render_engine = v
+  opts.on '-r', '--render-engines NAME,...', Array, 'Rendering engines, defaults to html' do |v|
+    options.render_engines.concat v
   end
 
   opts.on '-d', '--directory NAME', String, 'Output directory' do |v|
@@ -26,12 +26,24 @@ parser = OptionParser.new do |opts|
   end
 end
 
+options.render_engines << 'html' unless options.render_engines.empty?
+options.render_engines.uniq!
+
 argv = parser.parse(ARGV)
 
-if renderer = EDST::BaseRenderer[options.render_engine]
+renderers = options.render_engines.map do |re|
+  if renderer = EDST::BaseRenderer[re]
+    renderer
+  else
+    abort "Invalid render_engine #{re}"
+    nil
+  end
+end
+renderers.compact!
+renderers.uniq!
+
+renderers.each do |renderer|
   argv.each do |filename|
     renderer.render_file filename, options
   end
-else
-  abort "Invalid render_engine #{options.render_engine}"
 end
