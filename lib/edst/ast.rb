@@ -31,6 +31,8 @@ module EDST
     # @param [Symbol] kind  kind of node
     # @param [Hash<Symbol, Object>] options  initializer options
     def initialize(kind = :null, **options)
+      @raw = nil
+      @line = nil
       @kind = kind
       @key = nil
       @value = nil
@@ -38,6 +40,21 @@ module EDST
       @children = []
 
       import options
+    end
+
+    # Initializes a copy
+    #
+    # @param [AST] other
+    # @return [self]
+    def initialize_copy(other)
+      @raw = other.raw
+      @line = other.line
+      @kind = other.kind
+      @key = other.key
+      @value = other.value
+      @attributes = other.attributes.dup
+      @children = other.children.dup
+      self
     end
 
     # Does this node have any children?
@@ -81,67 +98,70 @@ module EDST
     # @param [Hash<Symbol, Object>] data
     # @return [void]
     def import(data)
-      @raw = data[:raw] if data.key?(:raw)
-      @line = data[:line] if data.key?(:line)
-      @kind = data[:kind] if data.key?(:kind)
-      @key = data[:key] if data.key?(:key)
-      @value = data[:value] if data.key?(:value)
+      @raw        = data[:raw]        if data.key?(:raw)
+      @line       = data[:line]       if data.key?(:line)
+      @kind       = data[:kind]       if data.key?(:kind)
+      @key        = data[:key]        if data.key?(:key)
+      @value      = data[:value]      if data.key?(:value)
       @attributes = data[:attributes] if data.key?(:attributes)
-      @children = data[:children] if data.key?(:children)
+      @children   = data[:children]   if data.key?(:children)
     end
 
-    # Checks if the provided node matches the given filter.
-    # The filter can take the form of a word, or a dot notation word.
+    # Checks if the provided node matches the given query.
+    # The query can take the form of a word, or a dot notation word.
     # If given a dot notation it will match the first word as the node's kind
     # and then the second as its key.
     #
     # @param [AST] node
-    # @param [String] filter
+    # @param [String] query
     # @api
     #
     # @example
     #   node #=> kind: tag key: age
-    #   compare_filter(node, "tag") #=> true
-    #   compare_filter(node, "tag.name") #=> false
-    def compare_filter(node, filter)
-      case filter
+    #   compare_query(node, "tag") #=> true
+    #   compare_query(node, "tag.name") #=> false
+    def compare_query(node, query)
+      case query
       when /(\w+)\.(\w+)/
         (node.kind.to_s == $1 && node.key.to_s == $2)
       else
-        node.kind.to_s == filter
+        node.kind.to_s == query
       end
     end
 
-    # Finds children that match the given filters, each filter is matched
+    # Finds children that match the given queries, each query is matched
     # to the next node's child.
     #
-    # @param [Array<String>] filters  filters to match against
+    # @param [Array<String>] queries  queries to match against
     # @yieldparam [AST] node  the matches node
-    def search_by_filter(filters, &block)
-      return if filters.empty?
-      filter = filters[0]
-      subfilters = filters[1, filters.size - 1]
+    def search_by_query(queries, &block)
+      return if queries.empty?
+      query = queries[0]
+      subqueries = queries[1, queries.size - 1]
       each_child do |node|
-        if compare_filter(node, filter)
-          if subfilters.empty?
+        # checks if the current node matches the query
+        if compare_query(node, query)
+          if subqueries.empty?
             block.call node
           else
-            node.search_by_filter(subfilters, &block)
+            node.search_by_query(subqueries, &block)
           end
         end
+        # checks if children match the query
+        node.search_by_query(queries, &block)
       end
     end
 
-    # Searches the node's children for nodes that match the given filter str.
-    # The str will be split by spaces and passed in {#search_by_filter}.
+    # Searches the node's children for nodes that match the given query str.
+    # The str will be split by spaces and passed in {#search_by_query}.
     #
     # @param [String] str
     # @yieldparam [AST] node
     # @return [Enumerator] if not block is given an enumerator is returned
     def search(str, &block)
       return to_enum :search, str unless block
-      filters = str.split(/\s+/)
-      search_by_filter filters, &block
+      queries = str.split(/\s+/)
+      search_by_query queries, &block
     end
 
     # Delegate for #attributes[]

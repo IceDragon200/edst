@@ -1,5 +1,8 @@
 CHANGELOG
 =========
+## 0.27.0
+Changed `AST#search` behaviour, it will now search all node levels in a tree, rather than just the first level.
+
 ## 0.26.1
 Added missing tag macros to Markdown renderer
 
