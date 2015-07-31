@@ -81,7 +81,7 @@ module EDST
           ctx = render_stream_to stream, contents, OpenStruct.conj({ filename: filename }, options)
         end
       end
-      puts "\tRENDER #{out}".colorize(:light_green)
+      puts "\tRENDER #{output_filename}".colorize(:light_green)
       ctx.export_assets
     end
 
