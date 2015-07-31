@@ -39,7 +39,7 @@ module EDST
     # Copies all found assets to the target options.directory
     def export_assets
       dirname = File.dirname(filename)
-      ctx.asset_exports.each do |pair|
+      asset_exports.each do |pair|
         src, dest = *pair
         s = File.expand_path(src, dirname)
         d = File.expand_path(dest, options.directory)
