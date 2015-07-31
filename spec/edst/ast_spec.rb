@@ -1,8 +1,8 @@
-require_relative 'spec_helper'
+require 'spec_helper'
 require 'edst/ast'
 
 describe EDST::AST do
-  subject(:sample_ast) { EDST.parse(File.read(File.expand_path('../../sample/test.edst', File.dirname(__FILE__)))) }
+  subject(:sample_ast) { EDST.parse(File.read(fixture_pathname('test.edst'))) }
 
   context '#add_child' do
     it 'should add a new child' do

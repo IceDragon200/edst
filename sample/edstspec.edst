@@ -3,10 +3,10 @@
 {
   %empty_tag
   %tag_with_value Hello World
-  --Label--
-  -- Label --
-  ---Item
-  --- Item
+  --Label1--
+  -- Label2 --
+  ---Item1
+  --- Item2
   ~HEADER
   # Comment
 

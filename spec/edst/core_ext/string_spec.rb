@@ -1,4 +1,4 @@
-require_relative '../spec_helper'
+require 'spec_helper'
 require 'edst/core_ext/string'
 
 describe String do
