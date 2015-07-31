@@ -1,3 +1,4 @@
+require 'edst/core_ext/ostruct'
 require 'active_support/core_ext/string'
 require 'active_support/core_ext/object/blank'
 require 'edst/parser'
@@ -77,7 +78,7 @@ module EDST
         File.basename(filename, File.extname(filename)) + output_extname)
       File.open(filename, 'r') do |stream|
         File.open(output_filename, 'w') do |contents|
-          ctx = render_stream_to stream, contents, { filename: filename }.merge(options)
+          ctx = render_stream_to stream, contents, OpenStruct.conj({ filename: filename }, options)
         end
       end
       puts "\tRENDER #{out}".colorize(:light_green)
