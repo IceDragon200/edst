@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
-require 'edst/cli/base_renderer'
-require 'edst/cli/quick_html_renderer'
-require 'edst/cli/markdown_renderer'
-require 'edst/cli/text_renderer'
+require 'edst/renderers'
 require 'ostruct'
 require 'optparse'
 

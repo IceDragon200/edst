@@ -1,5 +1,5 @@
-require 'slim'
-require 'edst/cli/base_renderer'
+require 'erubis'
+require 'edst/renderers/base_renderer'
 
 module EDST
   # EDST's generic HTML renderer

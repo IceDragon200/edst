@@ -1,5 +1,5 @@
 require 'erubis'
-require 'edst/cli/base_renderer'
+require 'edst/renderers/base_renderer'
 
 module EDST
   # Markdown renderer

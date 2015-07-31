@@ -39,7 +39,9 @@ module EDST
   # @param [String] stream
   # @return [AST]
   def self.parse_bare(stream, options = {})
-    ptr = StringScanner.new(stream)
+    string = stream
+    string = string.read if string.is_a?(IO)
+    ptr = StringScanner.new(string)
     Parsers::StreamParser.new(options).match(ptr)
   rescue Interrupt => ex
     STDERR.puts "Parser interrupted at: (#{ptr.pos}/#{ptr.string.size}), rest: #{ptr.rest}"
