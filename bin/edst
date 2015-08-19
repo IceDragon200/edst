@@ -30,10 +30,9 @@ argv = parser.parse(ARGV)
 
 renderers = options.render_engines.map do |re|
   if renderer = EDST::BaseRenderer[re]
-    renderer
+    renderer.new
   else
     abort "Invalid render_engine #{re}"
-    nil
   end
 end
 renderers.compact!
