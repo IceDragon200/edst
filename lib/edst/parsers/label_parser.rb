@@ -12,9 +12,11 @@ module EDST
       # @return [AST, nil]
       def match(ptr, depth = 0)
         return nil unless ptr.scan(/--/)
+        start_pos = ptr.pos
         ptr.skip(/\s+/)
         value = ptr.scan_until(/--/) || ''
-        AST.new(:label, value: value.gsub(/\s*--\s*\z/, '').strip)
+        str = value.gsub(/\s*--\s*\z/, '').strip
+        AST.new(:label, value: str, pos: start_pos)
       end
     end
   end

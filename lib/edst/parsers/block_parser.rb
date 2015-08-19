@@ -20,6 +20,7 @@ module EDST
       # @return [AST, nil]
       def match(ptr, depth = 0)
         return nil unless ptr.scan(/\{/)
+        start_pos = ptr.pos
         ctx = OpenStruct.new(id: generate_id, depth: depth)
         verbose_debug_log ctx, ptr, "opened"
         children = []
@@ -34,7 +35,7 @@ module EDST
             children << ast
           end
         end
-        AST.new(:div, children: children)
+        AST.new(:div, children: children, pos: start_pos)
       end
     end
   end

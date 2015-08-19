@@ -13,9 +13,10 @@ module EDST
       # @param [StringScanner] ptr
       # @return [AST, nil]
       def match(ptr, depth = 0)
+        start_pos = ptr.pos
         if sp = ptr.scan(/\s+/)
           if sp.gsub(' ', '') =~ /\n\n/
-            return AST.new(:el, value: sp)
+            return AST.new(:el, value: sp, pos: start_pos)
           end
         end
         nil

@@ -89,7 +89,7 @@ module EDST
       def handle_ast(ctx, ast)
         if ast.kind == :word
           ctx.last ||= begin
-            AST.new(:p, value: []).tap { |l| ctx.result << l }
+            AST.new(:p, value: [], pos: ast.pos).tap { |l| ctx.result << l }
           end
           ctx.last.value << ast.value
           return true
@@ -111,7 +111,7 @@ module EDST
       def handle_ast(ctx, ast)
         if ast.kind == @item_kind
           ctx.last ||= begin
-            AST.new(@group_name).tap { |l| ctx.result << l }
+            AST.new(@group_name, pos: ast.pos).tap { |l| ctx.result << l }
           end
           ctx.last.children << ast
           return true
@@ -145,7 +145,7 @@ module EDST
       def handle_ast(ctx, ast)
         if ast.kind == :p || ast.kind == :string
           ctx.last ||= begin
-            AST.new(:p, value: '').tap { |l| ctx.result << l }
+            AST.new(:p, value: '', pos: ast.pos).tap { |l| ctx.result << l }
           end
           v = ast.value
           v = v.dump if ast.kind == :string
@@ -213,7 +213,7 @@ module EDST
       asts.map do |node|
         result = case node.kind
         when :label
-          node.value.blank? ? AST.new(:split) : node.dup
+          node.value.blank? ? AST.new(:split, pos: node.pos) : node.dup
         else
           node.dup
         end

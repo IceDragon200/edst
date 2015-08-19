@@ -21,10 +21,11 @@ module EDST
       # @return [AST, nil]
       def match(ptr, depth = 0)
         return nil unless ptr.scan(/@/)
+        start_pos = ptr.pos
         speaker = ptr.scan(/[^"`]+/).strip
         text = @sp.match(ptr, depth + 1)
         raise DialogueTextMissing unless text
-        AST.new(:dialogue, key: speaker, value: text.value)
+        AST.new(:dialogue, key: speaker, value: text.value, pos: start_pos)
       end
     end
   end

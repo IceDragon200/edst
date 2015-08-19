@@ -4,6 +4,32 @@ require 'strscan'
 require 'edst/parsers'
 
 module EDST
+  # Class for tagging line numbers
+  class SourceFile
+    # @param [String] string
+    def initialize(string)
+      start = 0
+      @map = []
+      string.each_line do |line|
+        @map << [line, start...(start + line.size)]
+        start += line.size
+      end
+    end
+
+    # Position in the stream to return its source line
+    #
+    # @param [Integer] index
+    # @return [Array[String, Integer]] line, line_number
+    def source_line(index)
+      @map.each_with_index do |(s, range), i|
+        if range.cover?(index)
+          return s, i
+        end
+      end
+      return nil, -1
+    end
+  end
+
   # Error raised when the parser hasn't moved from its current location
   # after attempting to match
   class ParserJam < RuntimeError
@@ -48,11 +74,26 @@ module EDST
     raise ex
   end
 
+  # Adds debug information to the provided node from the given SourceFile
+  #
+  # @param [SourceFile] source
+  # @param [AST] node
+  def self.apply_debug(source, node)
+    node.raw, node.line = source.source_line(node.pos)
+    node.each_child do |subnode|
+      apply_debug(source, subnode)
+    end
+  end
+
   # Parses the stream and processes it for easy usage.
   #
   # @param [String] stream
   # @return [AST]
   def self.parse(stream, options = {})
-    AstProcessor.process parse_bare(stream, options)
+    string = stream
+    string = string.read if string.is_a?(IO)
+    result = AstProcessor.process parse_bare(string, options)
+    apply_debug(SourceFile.new(string), result) if options[:debug]
+    result
   end
 end

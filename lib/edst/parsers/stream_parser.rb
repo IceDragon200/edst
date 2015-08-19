@@ -28,7 +28,7 @@ module EDST
             raise ParserJam.new(ptr, "StreamParser[#{depth}]")
           end
         end
-        AST.new(:root, children: children)
+        AST.new(:root, children: children, pos: 0)
       end
     end
   end

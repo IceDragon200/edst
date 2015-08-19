@@ -12,8 +12,9 @@ module EDST
       # @param [StringScanner] ptr
       # @return [AST, nil]
       def match(ptr, depth = 0)
+        start_pos = ptr.pos
         if word = ptr.scan(/\S+/)
-          AST.new(:word, value: word)
+          AST.new(:word, value: word, pos: start_pos)
         else
           nil
         end

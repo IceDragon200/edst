@@ -28,11 +28,12 @@ module EDST
       # @return [AST, nil]
       def match(ptr, depth = 0)
         case c = ptr.peek(1)
-        #when '"', '\'', '`'
         when '"', '`'
+          start_pos = ptr.pos
           ptr.pos += 1
           AST.new(:string, value: ptr.scan_until(/#{c}/).chop,
-                           attributes: { type: char_to_type(c) })
+                           attributes: { type: char_to_type(c) },
+                           pos: start_pos)
         else
           nil
         end

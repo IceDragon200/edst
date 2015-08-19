@@ -13,7 +13,8 @@ module EDST
       # @return [AST, nil]
       def match(ptr, depth = 0)
         return nil unless ptr.scan(/#/)
-        AST.new(:comment, value: ptr.scan_until(/$/))
+        start_pos = ptr.pos
+        AST.new(:comment, value: ptr.scan_until(/$/), pos: start_pos)
       end
     end
   end

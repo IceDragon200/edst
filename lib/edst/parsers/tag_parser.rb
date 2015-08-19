@@ -18,12 +18,21 @@ module EDST
       # @return [AST, nil]
       def match(ptr, depth = 0)
         return nil unless ptr.scan(/%/)
+        start_pos = ptr.pos
         if ptr.scan(/%/)
-          AST.new(:tag, key: ptr.scan_until(/$/), value: nil, attributes: { type: 'block' })
+          AST.new(:tag,
+            key: ptr.scan_until(/$/),
+            value: nil,
+            attributes: { type: 'block' },
+            pos: start_pos)
         else
           key = ptr.scan(/\S+/)
           value = ptr.scan_until(/$/).strip
-          AST.new(:tag, key: key, value: value, attributes: { type: 'flat' })
+          AST.new(:tag,
+            key: key,
+            value: value,
+            attributes: { type: 'flat' },
+            pos: start_pos)
         end
       end
     end

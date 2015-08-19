@@ -8,6 +8,9 @@ module EDST
     # @!attribute line
     #   @return [Integer] line number
     attr_accessor :line
+    # @!attribute pos
+    #   @return [Integer] position in original stream
+    attr_accessor :pos
     # @!endgroup
 
     # @!group Data
@@ -49,6 +52,7 @@ module EDST
     def initialize_copy(other)
       @raw = other.raw
       @line = other.line
+      @pos = other.pos
       @kind = other.kind
       @key = other.key
       @value = other.value
@@ -100,6 +104,7 @@ module EDST
     def import(data)
       @raw        = data[:raw]        if data.key?(:raw)
       @line       = data[:line]       if data.key?(:line)
+      @pos        = data[:pos]        if data.key?(:pos)
       @kind       = data[:kind]       if data.key?(:kind)
       @key        = data[:key]        if data.key?(:key)
       @value      = data[:value]      if data.key?(:value)

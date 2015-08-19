@@ -14,8 +14,9 @@ module EDST
       # @return [AST, nil]
       def match(ptr, depth = 0)
         return nil unless ptr.scan(/\~/)
+        start_pos = ptr.pos
         if head = ptr.scan(/\S+/)
-          AST.new(:header, value: head)
+          AST.new(:header, value: head, pos: start_pos)
         else
           raise InvalidHeader, "Headers must have at least 1 word"
         end
