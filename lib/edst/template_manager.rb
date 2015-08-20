@@ -65,7 +65,6 @@ module EDST
         return path if File.exist?(path)
       end
       fail "template: #{name} could not be found in paths"
-      return nil
     end
 
     # Loads a template using tilt, or returns an existing one from the

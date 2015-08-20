@@ -15,8 +15,6 @@ module EDST
         start_pos = ptr.pos
         if word = ptr.scan(/\S+/)
           AST.new(:word, value: word, pos: start_pos)
-        else
-          nil
         end
       end
     end

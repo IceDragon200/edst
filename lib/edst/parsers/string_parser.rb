@@ -34,8 +34,6 @@ module EDST
           AST.new(:string, value: ptr.scan_until(/#{c}/).chop,
                            attributes: { type: char_to_type(c) },
                            pos: start_pos)
-        else
-          nil
         end
       end
     end

@@ -18,7 +18,7 @@ class String
   # @param [String, Regexp] q  query
   # @param [Integer] from  starting position
   def index_of_prev_closest(q, from = 0)
-    index_of_closest -1, q, from
+    index_of_closest(-1, q, from)
   end
 
   # Finds the next closest thing that matches the query.
@@ -26,6 +26,6 @@ class String
   # @param [String, Regexp] q  query
   # @param [Integer] from  starting position
   def index_of_next_closest(q, from = 0)
-    index_of_closest 1, q, from
+    index_of_closest(1, q, from)
   end
 end

@@ -80,7 +80,6 @@ module EDST
       # @return [String]
       # @api
       def context_debug_str(ctx)
-        depth_str = '%-04s' % ctx.depth
         "#{' ' * ctx.depth}#{context_str(ctx)}"
       end
 
@@ -100,7 +99,7 @@ module EDST
       # @param [String] msg
       # @api
       def debug_log(ctx, ptr, msg)
-        prev_line, line, next_line = *debug_lines(ptr)
+        prev_line, line, _ = *debug_lines(ptr)
         @logger.puts "#{context_debug_str(ctx)} #{msg} .. pos: (#{ptr_pos_str(ptr)}), prev_line: (#{prev_line.strip}), line: (#{line.strip})"
       end
 
