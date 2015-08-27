@@ -1,3 +1,5 @@
+require 'edst/search_tree'
+
 module EDST
   # Main class for describing the data in EDST.
   class AST
@@ -112,51 +114,6 @@ module EDST
       @children   = data[:children]   if data.key?(:children)
     end
 
-    # Checks if the provided node matches the given query.
-    # The query can take the form of a word, or a dot notation word.
-    # If given a dot notation it will match the first word as the node's kind
-    # and then the second as its key.
-    #
-    # @param [AST] node
-    # @param [String] query
-    # @api
-    #
-    # @example
-    #   node #=> kind: tag key: age
-    #   compare_query(node, "tag") #=> true
-    #   compare_query(node, "tag.name") #=> false
-    def compare_query(node, query)
-      case query
-      when /(\w+)\.(\w+)/
-        (node.kind.to_s == $1 && node.key.to_s == $2)
-      else
-        node.kind.to_s == query
-      end
-    end
-
-    # Finds children that match the given queries, each query is matched
-    # to the next node's child.
-    #
-    # @param [Array<String>] queries  queries to match against
-    # @yieldparam [AST] node  the matches node
-    def search_by_query(queries, &block)
-      return if queries.empty?
-      query = queries[0]
-      subqueries = queries[1, queries.size - 1]
-      each_child do |node|
-        # checks if the current node matches the query
-        if compare_query(node, query)
-          if subqueries.empty?
-            block.call node
-          else
-            node.search_by_query(subqueries, &block)
-          end
-        end
-        # checks if children match the query
-        node.search_by_query(queries, &block)
-      end
-    end
-
     # Searches the node's children for nodes that match the given query str.
     # The str will be split by spaces and passed in {#search_by_query}.
     #
@@ -165,8 +122,7 @@ module EDST
     # @return [Enumerator] if not block is given an enumerator is returned
     def search(str, &block)
       return to_enum :search, str unless block
-      queries = str.split(/\s+/)
-      search_by_query queries, &block
+      SearchTree.new(self, str, &block)
     end
 
     # Delegate for #attributes[]
