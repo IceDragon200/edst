@@ -2,6 +2,9 @@ module EDST
   # Main class for describing the data in EDST.
   class AST
     # @!group Debugging
+    # @!attribute filename
+    #   @return [String] source file
+    attr_accessor :filename
     # @!attribute raw
     #   @return [String] original string before processing
     attr_accessor :raw

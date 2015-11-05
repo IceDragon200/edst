@@ -78,10 +78,11 @@ module EDST
   #
   # @param [SourceFile] source
   # @param [AST] node
-  def self.apply_debug(source, node)
+  def self.apply_debug(source, node, options)
     node.raw, node.line = source.source_line(node.pos)
+    node.filename = options[:filename] if options[:filename]
     node.each_child do |subnode|
-      apply_debug(source, subnode)
+      apply_debug(source, subnode, options)
     end
   end
 
@@ -93,7 +94,7 @@ module EDST
     string = stream
     string = string.read if string.is_a?(IO)
     result = AstProcessor.process parse_bare(string, options)
-    apply_debug(SourceFile.new(string), result) if options[:debug]
+    apply_debug(SourceFile.new(string), result, options) if options[:debug]
     result
   end
 end
