@@ -1,3 +1,5 @@
+require 'ostruct'
+
 class OpenStruct
   def self.conj(a, b)
     new(a).tap do |c|
