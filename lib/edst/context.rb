@@ -9,19 +9,19 @@ module EDST
     include EDST::Helpers::TextHelper
 
     # @!attribute alert
-    #   @return [Alert] logger
+    #   @return [EDST::Alert] logger
     attr_accessor :alert
 
     # @!attribute filename
     #   @return [String] original filename
     attr_accessor :filename
 
-    # @!attribute tree
-    #   @return [AST] the ast to render
-    attr_accessor :tree
+    # @!attribute document
+    #   @return [EDST::AST] the ast to render
+    attr_accessor :document
 
     # @!attribute template_manager
-    #   @return [TemplateManager] the template manager
+    #   @return [EDST::TemplateManager] the template manager
     attr_accessor :template_manager
 
     # @!attribute asset_exports
@@ -32,8 +32,32 @@ module EDST
     #   @return [OpenStruct] options that where used to render the context
     attr_accessor :options
 
-    def initialize
-      @alert = Alert.new
+    # @!attribute data
+    #   @return [Object] data  anything goes here
+    attr_accessor :data
+
+    def initialize(**opts)
+      self.filename = opts[:filename]
+      self.options = opts.fetch(:options) { {} }
+      self.template_manager = opts.fetch(:template_manager)
+      self.document = opts.fetch(:document)
+      self.data = opts[:data]
+      self.alert = Alert.new
+      self.asset_exports = []
+    end
+
+    # @return [EDST::AST]
+    # @deprecated
+    def tree
+      warn "DEPRECATED: Use #document instead"
+      document
+    end
+
+    # @param [EDST::AST] doc
+    # @deprecated
+    def tree=(doc)
+      warn "DEPRECATED: Use #document= instead"
+      self.document = doc
     end
 
     # Copies all found assets to the target options.directory

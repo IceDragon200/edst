@@ -3,11 +3,11 @@
 <%   str = ". " + value + (" " * (depth + 1)) %>
 <%=  str + ("." * [0, 80 - str.size].max) %>
 <% end %>
-<% render_tree = lambda do |tre, depth = 0| %>
+<% render_document = lambda do |tre, depth = 0| %>
 <%   tre.each_child do |node| %>
 <%     case node.kind %>
 <%     when :dialogue_group %>
-<%       render_tree.call(node, depth.succ) %>
+<%       render_document.call(node, depth.succ) %>
 
 <%     when :dialogue %>
 
@@ -17,7 +17,7 @@
 <%     when :ln %>
 * <%=      node.value %>
 <%     when :list %>
-<%       render_tree.call(node, depth.succ) %>
+<%       render_document.call(node, depth.succ) %>
 
 <%     when :header %>
 <%       render_header.call(node.value, depth) %>
@@ -45,7 +45,7 @@
 <%         bounds = ":" * (depth + 1) %>
 <%=        bounds + " " + node.key.upcase + " " + bounds %>
 <%       end %>
-<%       render_tree.call(node, depth.succ) %>
+<%       render_document.call(node, depth.succ) %>
 
 <%     when :p %>
 <%       unless node.value.blank? %>
@@ -57,4 +57,4 @@
 <%     end %>
 <%   end %>
 <% end %>
-<% render_tree.call(tree) %>
+<% render_document.call(document) %>

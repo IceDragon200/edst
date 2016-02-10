@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    - head = ((h = tree.search('header').first) && h.value) || File.basename(filename)
+    - head = ((h = document.search('header').first) && h.value) || File.basename(filename)
     title = head.titlecase
     meta charset="utf-8"
     link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'

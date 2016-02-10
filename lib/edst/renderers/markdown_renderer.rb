@@ -4,9 +4,8 @@ require 'edst/renderers/base_renderer'
 module EDST
   # Markdown renderer
   class MarkdownRenderer < BaseRenderer
-    # @return [String]
-    def default_template_name
-      'views/markdown.md.erb'
+    def initialize
+      super template_name: 'views/markdown.md.erb'
     end
 
     register 'md', 'markdown'

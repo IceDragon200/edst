@@ -30,12 +30,12 @@
       dt class="#{tag_id}" = tag_name.titlecase
       dd class="#{tag_id}" = node.value
 
-- render_tree = lambda do |tre, node_ctx, d = 0|
+- render_document = lambda do |tre, node_ctx, d = 0|
   - tre.each_child do |node|
     - case node.kind
     - when :dialogue_group
       .dialogues
-        - render_tree.call node, node_ctx, d + 1
+        - render_document.call node, node_ctx, d + 1
     - when :dialogue
       .dialogue
         .h.speaker = node.key
@@ -44,7 +44,7 @@
       li = node.value
     - when :list
       ul
-        - render_tree.call node, node_ctx, d + 1
+        - render_document.call node, node_ctx, d + 1
     - when :header
       .h = node.value
     - when :label
@@ -64,7 +64,7 @@
           .h = t.titlecase
           .c
             - sub_ctx = OpenStruct.new(parent: node_ctx)
-            - render_tree.call node, sub_ctx, d + 1
+            - render_document.call node, sub_ctx, d + 1
     - when :p
       p = node.value
     - else
@@ -76,4 +76,4 @@
           dd = node.value
 
 - node_ctx = OpenStruct.new
-- render_tree.call tree, node_ctx, 0
+- render_document.call document, node_ctx, 0

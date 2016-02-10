@@ -1,3 +1,4 @@
+require 'active_support/core_ext/object/blank'
 require 'tilt'
 
 module EDST
@@ -18,14 +19,15 @@ module EDST
     attr_accessor :logger
 
     # @param [Hash<Symbol, Object>] options
+    #   @option :options [Array<String>] :paths
     def initialize(**options)
       @templates = {}
       user_paths = options.fetch(:paths, [])
       @paths = []
-      @paths += user_paths
+      @paths.concat user_paths
       @paths << ENV['EDST_TEMPLATE_PATH']
       @paths << File.expand_path('templates', root_path)
-      @paths.compact!
+      @paths.map(&:presence).compact!
       @logger = nil
     end
 

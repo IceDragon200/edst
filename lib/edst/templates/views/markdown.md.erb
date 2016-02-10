@@ -25,11 +25,11 @@
 <%     end %>
 <%   end %>
 <% end %>
-<% render_tree = lambda do |tre, depth = 0| %>
+<% render_document = lambda do |tre, depth = 0| %>
 <%   tre.each_child do |node| %>
 <%     case node.kind %>
 <%     when :dialogue_group %>
-<%       render_tree.call(node, depth.succ) %>
+<%       render_document.call(node, depth.succ) %>
 
 <%     when :dialogue %>
 `<%= node.key %>`
@@ -38,7 +38,7 @@
 <%     when :ln %>
 * <%= node.value %>
 <%     when :list %>
-<% render_tree.call(node, depth.succ) %>
+<% render_document.call(node, depth.succ) %>
 
 <%     when :header %>
 <% render_header.call(node.value, depth) %>
@@ -54,7 +54,7 @@ _<%= node.value %>_
 <%       render_tag.call(node, depth) %>
 <%     when :div %>
 <% render_header.call(node.key, depth) %>
-<% render_tree.call(node, depth.succ) %>
+<% render_document.call(node, depth.succ) %>
 
 <%     when :p %>
 <%= node.value %>
@@ -64,4 +64,4 @@ _<%= node.value %>_
 <%     end %>
 <%   end %>
 <% end %>
-<% render_tree.call(tree) %>
+<% render_document.call(document) %>

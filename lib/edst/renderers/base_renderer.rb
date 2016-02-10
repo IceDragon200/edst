@@ -12,7 +12,17 @@ require 'tilt'
 module EDST
   # Base class for Renderers
   class BaseRenderer
+    # @return [Hash<String, BaseRenderer>]
     @@renderers = {}
+
+    attr_accessor :template_name
+
+    # @param [Hash<Symbol, Object>] options
+    #   @option options [String] :template_name
+    #     Name of the default template to use
+    def initialize(**options)
+      self.template_name = options.fetch(:template_name)
+    end
 
     # Template names must be in the form of <filename>.<target_ext>.<template_ext>
     # EG.
@@ -20,9 +30,8 @@ module EDST
     #   layout.html.slim
     #
     # @return [String]
-    # @abstract
     def default_template_name
-      fail "No default template name set for this renderer"
+      @template_name
     end
 
     # File extension for the renderer output files
@@ -37,49 +46,72 @@ module EDST
         File.extname(default_template_name)))
     end
 
-    # Parses an EDST stream and renders it as HTML
+    # Renders an EDST::AST to the out_stream
     #
+    # @param [EDST::AST] doc
     # @param [IO, String] out_stream
-    # @param [IO, String] in_stream
     # @param [Hash<Symbol, Object>, OpenStruct] opts
-    # @return [[Context, String]] ctx, result
-    def render_stream_to(in_stream, out_stream, opts = {})
+    #   @option opts [String] :filename
+    #   @option opts [String] :directory
+    #   @option opts [Boolean] :debug
+    #   @option opts [EDST::TemplateManager] :template_manager
+    # @return [Context] ctx
+    def render_doc_to(doc, out_stream, **opts)
       options = OpenStruct.new(opts)
       filename = options.filename
+      data = options.data
+      tm = options.template_manager
+      tm ||= begin
+        p = [Dir.getwd]
+        p.unshift options.directory if options.directory.present?
+        TemplateManager.new paths: p
+      end
 
-      tm = TemplateManager.new
-      tm.paths.unshift Dir.getwd
-      tm.paths.unshift options.directory
+      ctx = Context.new(document: doc,
+        template_manager: tm,
+        options: options,
+        filename: filename,
+        data: data)
+      doc.children.unshift EDST::AST.new(:comment, value: filename) if options.debug if filename
+      out_stream << tm.render_template(options.template || default_template_name, ctx)
 
+      ctx
+    end
+
+    # Parses an EDST stream and renders it as HTML
+    #
+    # @param [IO, String] in_stream
+    # @param [IO, String] out_stream
+    # @param [Hash<Symbol, Object>, OpenStruct] opts
+    #   @option opts [Hash] :parser_options
+    # @return [Context] ctx
+    def render_stream_to(in_stream, out_stream, **opts)
+      options = OpenStruct.new(opts)
       parser_options = options.parser_options || {}
 
       root = EDST.parse in_stream, parser_options
-      ctx = Context.new
-      ctx.options = options
-      ctx.tree = root
-      ctx.template_manager = tm
-      ctx.asset_exports = [] # files that need to be copied as well
-      if filename
-        root.children.unshift EDST::AST.new(:comment, value: filename)
-        ctx.filename = filename
-      end
-      out_stream << tm.render_template(options.template || default_template_name, ctx)
-      ctx
+
+      render_doc_to(root, out_stream, **opts)
     end
 
     # Parses an EDST file `filename` and renders it as HTML
     #
     # @param [String] filename
     # @param [Hash<Symbol, Object>, OpenStruct] opts
+    #   @option opts [String] :output_filename
+    #     @optional
+    #   @option opts [String] :directory
     # @return [void]
-    def render_file(filename, opts = {})
+    def render_file(filename, **opts)
       options = OpenStruct.new(opts)
-      output_filename = File.join(options.directory,
-        File.basename(filename, File.extname(filename)) + output_extname)
+      output_filename = opts.fetch(:output_filename) do
+        File.join(options.directory,
+          File.basename(filename, File.extname(filename)) + output_extname)
+      end
       ctx = nil
       File.open(filename, 'r') do |stream|
         File.open(output_filename, 'w') do |contents|
-          ctx = render_stream_to stream, contents, OpenStruct.conj({ filename: filename }, options)
+          ctx = render_stream_to stream, contents, **OpenStruct.conj({ filename: filename }, options).to_h
         end
       end
       puts "\tRENDER #{output_filename}".colorize(:light_green)
@@ -91,7 +123,7 @@ module EDST
     # @param [String] extnames
     def self.register(*extnames)
       extnames.each do |ext|
-        @@renderers[ext] = self
+        @@renderers[ext.to_s] = self
       end
     end
 

@@ -4,9 +4,8 @@ require 'edst/renderers/base_renderer'
 module EDST
   # EDST's generic HTML renderer
   class QuickHtmlRenderer < BaseRenderer
-    # @return [String]
-    def default_template_name
-      'views/generic.html.slim'
+    def initialize
+      super template_name: 'views/generic.html.slim'
     end
 
     register 'html'
