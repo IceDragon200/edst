@@ -32,7 +32,7 @@ module EDST
 
         renderers.each do |renderer|
           argv.each do |filename|
-            renderer.render_file filename, @settings
+            renderer.render_file filename, @settings.to_h
           end
         end
       end
