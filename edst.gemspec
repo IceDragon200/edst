@@ -29,7 +29,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'activesupport', '>= 4.2', '< 6.0'
   s.add_runtime_dependency 'yajl-ruby',     '~> 1.2'
   # dev
-  s.add_development_dependency 'codeclimate-test-reporter', '~> 0'
   s.add_development_dependency 'simplecov', '~> 0'
   s.add_development_dependency 'rspec',     '~> 3.1'
 
