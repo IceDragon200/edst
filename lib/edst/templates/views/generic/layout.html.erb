@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <% head = ((h = document.search('header').first) && h.value) || File.basename(filename) %>
+    <title><%= head.titlecase %></title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato" type="text/css">
+    <style>
+      <%= template_manager.render_template('stylesheets/edst_generic.scss') %>
+    </style>
+    <%# link rel="stylesheet" href="../../edst_generic.css" type="text/css" %>
+  </head>
+
+  <body lang="en">
+    <div class="content">
+      <%= yield %>
+    </div>
+  </body>
+</html>

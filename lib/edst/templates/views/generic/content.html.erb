@@ -1,0 +1,100 @@
+<% render_tag = lambda do |node, node_ctx, d = 0|
+  tag_name = node.key
+  if tag_name.start_with?('&')
+    case tag_name[1...tag_name.length]
+    when /image(?:#(\S+))?/
+      ref = $1 || ''
+      fn = node.value
+      bsn = File.basename(fn)
+      ex = "images/#{bsn}"
+      asset = [fn, ex]
+      asset_exports << asset
+      (node_ctx.refs ||= {})[ref] = asset if ref.present? %>
+
+      <a href="./<%= ex %>" class="image-ref" id="<%= ref %>">
+        <span class="image-title">
+          <% if ref.present? %>
+            <span><%= ref %></span>
+          <% end %>
+          <span class="filename comment"><%= bsn %></span>
+        </span>
+        <span class="image-content">
+          <img src="./<%= ex %>" alt="">
+        </span>
+      </a>
+    <% else %>
+      <% alert.fixme node.kind, node.key, node.value %>
+      <div class="fixme meta <%= node.kind %>">
+        <p class="comment"><%= "FIXME: #{node.kind} #{tag_name}" %></p>
+        <dl>
+          <dt><%= node.key %></dt>
+          <dd><%= node.value %></dd>
+        </dl>
+      </div>
+    <% end %>
+  <% else %>
+    <% tag_id = "tag-#{tag_name.downcase}" %>
+    <dl class="tag <%= tag_id %>">
+      <dt class="<%= tag_id %>"><%= tag_name.titlecase %></dt>
+      <dd class="<%= tag_id %>"><%= node.value %></dd>
+    </dl>
+  <% end %>
+<% end %>
+
+<% render_document = lambda do |tre, node_ctx, d = 0| %>
+  <% tre.each_child do |node| %>
+    <% case node.kind %>
+    <% when :dialogue_group %>
+      <div class="dialogues">
+        <% render_document.call node, node_ctx, d + 1 %>
+      </div>
+    <% when :dialogue %>
+      <div class="dialogue">
+        <div class="h speaker"><%= node.key %></div>
+        <div class="p text"><%= node.value %></div>
+      </div>
+    <% when :ln %>
+      <li><%= node.value %></li>
+    <% when :list %>
+      <ul>
+        <% render_document.call node, node_ctx, d + 1 %>
+      </ul>
+    <% when :header %>
+      <div class="h"><%= node.value %></div>
+    <% when :label %>
+      <div class="label" id="<%= node.value.underscore %>"><%= node.value %></div>
+    <% when :split %>
+      <hr/>
+    <% when :comment %>
+      <p class="comment"><%= node.value %></p>
+    <% when :tag %>
+      <% render_tag.call node, node_ctx, d + 1 %>
+    <% when :div %>
+      <% t = (node.key || '') %>
+      <div class="subtree <%= t.gsub('.', ' ') %>">
+        <% if node.children.empty? %>
+          <div class="h disabled"><%= t.titlecase %></div>
+        <% else %>
+          <div class="h"><%= t.titlecase %></div>
+          <div class="c">
+            <% sub_ctx = OpenStruct.new(parent: node_ctx) %>
+            <% render_document.call node, sub_ctx, d + 1 %>
+          </div>
+        <% end %>
+      </div>
+    <% when :p %>
+      <p><%= node.value %></p>
+    <% else %>
+      <% alert.fixme node.kind, node.key, node.value %>
+      <div class="fixme <%= node.kind %>">
+        <p class="comment"><%= "FIXME: #{node.kind}"%></p>
+        <dl>
+          <dt><%= node.key %></dt>
+          <dd><%= node.value %></dd>
+        </dl>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>
+<% node_ctx = OpenStruct.new %>
+<% render_document.call document, node_ctx, 0 %>
