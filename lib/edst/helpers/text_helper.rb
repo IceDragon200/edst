@@ -1,4 +1,4 @@
-require 'edst/core_ext/string'
+require_relative '../core_ext/string'
 
 module EDST
   # Helper modules

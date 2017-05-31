@@ -1,7 +1,7 @@
-require 'edst/ast'
-require 'edst/ast_processor'
+require_relative 'ast'
+require_relative 'ast_processor'
 require 'strscan'
-require 'edst/parsers'
+require_relative 'parsers'
 
 module EDST
   # Class for tagging line numbers

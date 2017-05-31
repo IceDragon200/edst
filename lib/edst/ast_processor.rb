@@ -1,5 +1,5 @@
 require 'active_support/core_ext/object/blank'
-require 'edst/ast'
+require_relative 'ast'
 
 module EDST
   # Module which defines helper methods and classes for processing ASTs

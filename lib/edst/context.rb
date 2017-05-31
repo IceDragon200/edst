@@ -1,6 +1,6 @@
-require 'edst/partials'
-require 'edst/helpers/text_helper'
-require 'edst/helpers/alert'
+require_relative 'partials'
+require_relative 'helpers/text_helper'
+require_relative 'helpers/alert'
 
 module EDST
   # Renderer context information

@@ -1,5 +1,5 @@
-require 'edst/renderers'
-require 'edst/core_ext/ostruct'
+require_relative 'renderers'
+require_relative 'core_ext/ostruct'
 require 'optparse'
 
 module EDST

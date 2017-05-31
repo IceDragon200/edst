@@ -1,2 +1,2 @@
-require 'edst/version'
-require 'edst/parser'
+require_relative 'edst/version'
+require_relative 'edst/parser'

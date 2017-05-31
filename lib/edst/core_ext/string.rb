@@ -1,2 +1,2 @@
-require 'edst/core_ext/string/index'
-require 'edst/core_ext/string/deflate'
+require_relative 'string/index'
+require_relative 'string/deflate'

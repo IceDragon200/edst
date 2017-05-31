@@ -1,4 +1,4 @@
-require 'edst/parsers/base_parser'
+require_relative 'base_parser'
 
 module EDST
   module Parsers

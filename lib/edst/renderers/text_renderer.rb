@@ -1,5 +1,5 @@
 require 'erubis'
-require 'edst/renderers/base_renderer'
+require_relative 'base_renderer'
 
 module EDST
   # EDST's generic HTML renderer

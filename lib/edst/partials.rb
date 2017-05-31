@@ -1,4 +1,4 @@
-require 'edst/template_manager'
+require_relative 'template_manager'
 
 module EDST
   # Helper module for implementing template partials
