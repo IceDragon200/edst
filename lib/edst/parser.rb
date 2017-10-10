@@ -46,6 +46,10 @@ module EDST
   # DialogueTextMissing is raised when a Dialogue is created without a String
   # for the text
   class DialogueTextMissing < RuntimeError
+    def initialize(ptr)
+      msg = "Dialogue Text is missing at pos(#{ptr.pos}/#{ptr.string.size})"
+      super msg
+    end
   end
 
   # Error raised when a Header is encountered without text.

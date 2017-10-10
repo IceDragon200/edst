@@ -24,7 +24,7 @@ module EDST
         start_pos = ptr.pos
         speaker = ptr.scan(/[^"`]+/).strip
         text = @sp.match(ptr, depth + 1)
-        raise DialogueTextMissing unless text
+        raise DialogueTextMissing.new(ptr) unless text
         AST.new(:dialogue, key: speaker, value: text.value, pos: start_pos)
       end
     end
