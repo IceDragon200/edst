@@ -14,6 +14,27 @@ module EDST
         )
       end
 
+      private def render_location(filename, renderer, settings)
+        if File.directory?(filename)
+          Dir.children(filename).each do |child|
+            fn = File.join(filename, child)
+            if File.directory?(fn)
+              new_settings = OpenStruct.conj(settings, {
+                directory: File.join(settings.directory, child)
+              })
+              render_location(fn, renderer, new_settings)
+            else
+              render_location(fn, renderer, settings)
+            end
+          end
+          Dir.glob(File.join(filename, "*.edst")).each do |fn|
+            renderer.render_file fn, settings.to_h
+          end
+        else
+          renderer.render_file filename, settings.to_h
+        end
+      end
+
       private def run_render(argv)
         if @settings.render_engines.empty?
           @settings.render_engines << 'html'
@@ -32,7 +53,7 @@ module EDST
 
         renderers.each do |renderer|
           argv.each do |filename|
-            renderer.render_file filename, @settings.to_h
+            render_location(filename, renderer, @settings)
           end
         end
       end

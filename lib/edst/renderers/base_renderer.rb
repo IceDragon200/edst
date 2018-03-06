@@ -110,6 +110,7 @@ module EDST
       end
       ctx = nil
       File.open(filename, 'r') do |stream|
+        FileUtils.mkdir_p File.dirname(output_filename)
         File.open(output_filename, 'w') do |contents|
           ctx = render_stream_to stream, contents, **OpenStruct.conj({ filename: filename }, options).to_h
         end
