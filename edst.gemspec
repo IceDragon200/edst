@@ -20,7 +20,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'colorize',      '~> 0.7'
   s.add_runtime_dependency 'rake',          '~> 10.3'
   s.add_runtime_dependency 'toml-rb',       '~> 0.1'
-  s.add_runtime_dependency 'bson',          '~> 2.3'
+  s.add_runtime_dependency 'bson',          '~> 3.0'
   s.add_runtime_dependency 'tilt',          '~> 2.0'
   s.add_runtime_dependency 'erubis',        '~> 2.7'
   s.add_runtime_dependency 'sass',          '~> 3.4'
