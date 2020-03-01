@@ -1,4 +1,5 @@
 require_relative '../core_ext/string'
+require_relative '../util'
 
 module EDST
   # Helper modules
@@ -66,7 +67,7 @@ module EDST
       # @return [String]
       def escape_lines(str, line_width)
         word_wrap(
-          edst_escape(str.deflate),
+          edst_escape(EDST::Util.deflate(str)),
           line_width: line_width
         ).each_line.map do |line|
           yield line.chomp

@@ -1,9 +1,8 @@
 require_relative '../core_ext/ostruct'
-require 'active_support/core_ext/string'
-require 'active_support/core_ext/object/blank'
 require_relative '../parser'
 require_relative '../context'
 require_relative '../template_manager'
+require_relative '../util'
 require 'ostruct'
 require 'fileutils'
 require 'colorize'
@@ -63,7 +62,7 @@ module EDST
       tm = options.template_manager
       tm ||= begin
         p = [Dir.getwd]
-        p.unshift options.directory if options.directory.present?
+        p.unshift options.directory if EDST::Util.is_present?(options.directory)
         TemplateManager.new paths: p
       end
 

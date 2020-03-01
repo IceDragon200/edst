@@ -8,8 +8,4 @@ def fixture_pathname(name)
   File.expand_path(File.join('../sample', name), File.dirname(__FILE__))
 end
 
-require 'simplecov'
-
-SimpleCov.start
-
 require 'edst'

@@ -18,16 +18,10 @@ Gem::Specification.new do |s|
   s.email  = 'mistdragon100@gmail.com'
 
   s.add_runtime_dependency 'colorize',      '~> 0.7'
-  s.add_runtime_dependency 'rake',          '~> 10.3'
-  s.add_runtime_dependency 'toml-rb',       '~> 0.1'
-  s.add_runtime_dependency 'bson',          '~> 3.0'
   s.add_runtime_dependency 'tilt',          '~> 2.0'
+  s.add_runtime_dependency 'sassc',         '~> 2.2'
   s.add_runtime_dependency 'erubis',        '~> 2.7'
-  s.add_runtime_dependency 'sass',          '~> 3.4'
-  s.add_runtime_dependency 'activesupport', '>= 4.2', '< 6.0'
-  s.add_runtime_dependency 'yajl-ruby',     '~> 1.2'
   # dev
-  s.add_development_dependency 'simplecov', '~> 0'
   s.add_development_dependency 'rspec',     '~> 3.1'
 
   s.require_path = 'lib'

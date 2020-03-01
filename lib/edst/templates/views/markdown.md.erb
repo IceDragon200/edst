@@ -1,5 +1,5 @@
 <% render_header = lambda do |value, depth = 0| %>
-<%   return unless value.present? %>
+<%   return unless EDST::Util.is_present?(value) %>
 <%=  ("#" * (depth + 1)) << " " << value %>
 <% end %>
 <% render_tag = lambda do |node, depth = 0| %>
@@ -13,7 +13,7 @@
 <%       ex = "images/#{bsn}" %>
 <%       asset = [fn, ex] %>
 <%       asset_exports << asset %>
-[![<%= ref %>](<%= ex %>)](<%= ex %>) <%= ref.titlecase %>
+[![<%= ref %>](<%= ex %>)](<%= ex %>) <%= EDST::Util.titlecase(ref) %>
 <%     else %>
 <%       alert.fixme node.kind, node.key, node.value %>
 <%     end %>

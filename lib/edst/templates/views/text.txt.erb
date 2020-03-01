@@ -1,5 +1,5 @@
 <% render_header = lambda do |value, depth = 0| %>
-<%   return unless value.present? %>
+<%   return unless EDST::Util.is_present?(value) %>
 <%   str = ". " + value + (" " * (depth + 1)) %>
 <%=  str + ("." * [0, 80 - str.size].max) %>
 <% end %>
@@ -41,14 +41,14 @@
 <%         render_header.call(node.key, depth) %>
 <%       end %>
 <%     when :div %>
-<%       if node.key.present? %>
+<%       if EDST::Util.is_present?(node.key) %>
 <%         bounds = ":" * (depth + 1) %>
 <%=        bounds + " " + node.key.upcase + " " + bounds %>
 <%       end %>
 <%       render_document.call(node, depth.succ) %>
 
 <%     when :p %>
-<%       unless node.value.blank? %>
+<%       unless EDST::Util.is_blank?(node.value) %>
 <%=        escape_lines(node.value, 76) { |s| (' ' * 2) + s } %>
 <%       end %>
 

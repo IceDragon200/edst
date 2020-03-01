@@ -1,5 +1,5 @@
-require 'active_support/core_ext/object/blank'
 require 'tilt'
+require_relative 'util'
 
 module EDST
   # A simple class for finding, loading and using tilt templates on the
@@ -27,7 +27,9 @@ module EDST
       @paths.concat user_paths
       @paths << ENV['EDST_TEMPLATE_PATH']
       @paths << File.expand_path('templates', root_path)
-      @paths.map(&:presence).compact!
+      @paths.map do |path|
+        EDST::Util.presence(path)
+      end.compact!
       @logger = nil
     end
 

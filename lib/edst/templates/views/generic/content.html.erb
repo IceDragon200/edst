@@ -9,12 +9,12 @@
       ex = "images/#{bsn}"
       asset = [fn, ex]
       asset_exports << asset
-      (node_ctx.refs ||= {})[ref] = asset if ref.present? %>
+      (node_ctx.refs ||= {})[ref] = asset if EDST::Util.is_present?(ref) %>
 
       <a href="./<%= ex %>" class="image-ref" id="<%= ref %>">
         <span class="image-title">
           <% if ref.present? %>
-            <span><%= ref %></span>
+            <span><%= EDST::Util.is_present?(ref) %></span>
           <% end %>
           <span class="filename comment"><%= bsn %></span>
         </span>
@@ -35,7 +35,7 @@
   <% else %>
     <% tag_id = "tag-#{tag_name.downcase}" %>
     <dl class="tag <%= tag_id %>">
-      <dt class="<%= tag_id %>"><%= tag_name.titlecase %></dt>
+      <dt class="<%= tag_id %>"><%= EDST::Util.titlecase(tag_name) %></dt>
       <dd class="<%= tag_id %>"><%= node.value %></dd>
     </dl>
   <% end %>
@@ -62,7 +62,7 @@
     <% when :header %>
       <div class="h"><%= node.value %></div>
     <% when :label %>
-      <div class="label" id="<%= node.value.underscore %>"><%= node.value %></div>
+      <div class="label" id="<%= EDST::Util.underscore(node.value) %>"><%= node.value %></div>
     <% when :split %>
       <hr/>
     <% when :comment %>
@@ -73,9 +73,9 @@
       <% t = (node.key || '') %>
       <div class="subtree <%= t.gsub('.', ' ') %>">
         <% if node.children.empty? %>
-          <div class="h disabled"><%= t.titlecase %></div>
+          <div class="h disabled"><%= EDST::Util.titlecase(t) %></div>
         <% else %>
-          <div class="h"><%= t.titlecase %></div>
+          <div class="h"><%= EDST::Util.titlecase(t) %></div>
           <div class="c">
             <% sub_ctx = OpenStruct.new(parent: node_ctx) %>
             <% render_document.call node, sub_ctx, d + 1 %>

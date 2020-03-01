@@ -1,5 +1,6 @@
 require_relative 'renderers'
 require_relative 'core_ext/ostruct'
+require_relative 'util'
 require 'optparse'
 
 module EDST
@@ -10,7 +11,7 @@ module EDST
           live: false,
           directory: Dir.getwd,
           render_engines: [],
-          template: ENV['EDST_HTML_TEMPLATE'].presence
+          template: EDST::Util.presence(ENV['EDST_HTML_TEMPLATE'])
         )
       end
 

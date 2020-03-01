@@ -2,7 +2,7 @@
 <html>
   <head>
     <% head = ((h = document.search('header').first) && h.value) || File.basename(filename) %>
-    <title><%= head.titlecase %></title>
+    <title><%= EDST::Util.titlecase(head) %></title>
     <meta charset="utf-8">
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Lato" type="text/css">
     <style>

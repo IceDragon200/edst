@@ -1,4 +1,4 @@
-require 'active_support/core_ext/object/blank'
+require_relative 'util'
 require_relative 'ast'
 
 module EDST
@@ -213,7 +213,7 @@ module EDST
       asts.map do |node|
         result = case node.kind
         when :label
-          node.value.blank? ? AST.new(:split, pos: node.pos) : node.dup
+          EDST::Util.is_blank?(node.value) ? AST.new(:split, pos: node.pos) : node.dup
         else
           node.dup
         end
